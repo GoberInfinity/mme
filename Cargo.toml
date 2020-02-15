@@ -1,0 +1,8 @@
+[package]
+name = "mme"
+version = "0.1.0"
+authors = ["¨Gober¨ <reyesfragosoroberto@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+ansi_term = "0.12"
