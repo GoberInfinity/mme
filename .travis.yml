@@ -1,7 +1,4 @@
 language: rust
-rust:
-  - stable
-  - beta
 
 cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
 
@@ -24,8 +21,7 @@ matrix: # Use of a matrix generates copies of a job, each with different input
     - name: Linux Binary
       env: TARGET=x86_64-unknown-linux-musl
       rust: beta
-      before_script: rustup target add $TARGET
-      script: cargo build --release --target $TARGET --locked --features vendored-openssl
+      script: cargo build --release --target $TARGET --locked
       addons:
         apt:
           packages:
