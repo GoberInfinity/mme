@@ -21,7 +21,7 @@ matrix: # Use of a matrix generates copies of a job, each with different input
     - name: Linux Binary
       env: TARGET=x86_64-unknown-linux-musl
       rust: beta
-      script: cargo build --release --target $TARGET --locked
+      script: cargo build --release --target $TARGET
       addons:
         apt:
           packages:
@@ -32,6 +32,6 @@ matrix: # Use of a matrix generates copies of a job, each with different input
       env: MACOSX_DEPLOYMENT_TARGET=10.7 TARGET=x86_64-apple-darwin
       os: osx
       rust: beta
-      script: cargo build --release --target $TARGET --locked
+      script: cargo build --release --target $TARGET
       install: true
       <<: *DEPLOY_TO_GITHUB
