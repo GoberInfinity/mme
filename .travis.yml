@@ -1,40 +1,33 @@
 language: rust
-
-cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
-
-DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
-  before_deploy:
-    - name="mme-$TRAVIS_TAG-$TARGET"
-    - mkdir $name
-    - cp target/$TARGET/release/mme $name/
-    - tar czvf $name.tar.gz $name #Use the following command to compress an entire directory or a single file on Linux
-  deploy:
-    edge: true
-    provider: releases
-    file: mme-$TRAVIS_TAG-$TARGET.tar.gz
-    skip_cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
+os:
+  - linux
+  - osx
+before_deploy:
+  - mv target/release/mme "target/release/mme-$TRAVIS_TAG-$TRAVIS_OS_NAME"
+deploy:
+  - provider: cargo
+    skip_cleanup: true
     on:
-      branch: master
       tags: true
+      condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux"
+      branch: master
+    token:
+      secure: # ;)
+  - provider: releases
+    skip_cleanup: true
+    on:
+      tags: true
+      condition: "$TRAVIS_RUST_VERSION = stable"
+      branch: master
+    file:
+      - target/release/mme-*
     api_key:
       secure: "MC4D6ODaOdtcQ5956O8Gdhz8RddNVqSlpRgVYWkClvjLiwV1In4zgxNIW8i7v3h2sdUqj36t1l8ZFc8IUZoPfiYzZiAg2LsXh5LlV93p1FLJa8zcF6pRLWrYOyGWy8URSOatyWONSOM+SuUV9/56ZRpifPeIMIsffLZ0WA3LhmKg7f4O3hLRAbd1j0ujJ3plbvKJkpg4y3PYMSR9YiVYcI6TrhEcPCqnLYaLXKoYg8EuI8gKFq0FPqd+yq7b1zeEMvrgRPsWRoNI22NBSGLTPYYFQyP4C/AeNMJiuvuCUpmTi2j/l06t2d34bNYNysAFHOh3Og8+ZYSSCw+SmPIeAptqDmWsYPRmByrYsSI7GRulLLJjuUvF8wvN1vcM3Gbfhz9j4djZ7JL1RHFzSuYXVMhg4RkoRU22ULzr8kVlf3TU4FdNd6K5t56QBzaRDvFisGufllnMFdfB376oigbz4DpK5knBae5gHbu50JFuv8jCcbLXghV1xbG8Gi8qwP4naV2lHLvK5NI3xCxv6tg6Ffo0Q3JrUT73RC63ZsIoBS6Cd53Dlkd8pStP0a04bgtlwGxtUTyQrC3lD0eNp869CZ/VRNQeDs00JdFgQOFV+HreZVPehIZYSf0prAkSCucctpfVqvqZ6bySAY0Gloa2ExHIx4dYbdU3RMtBiKMnfzQ="
-
-matrix: # Use of a matrix generates copies of a job, each with different input
-  include:
-    - name: Linux Binary
-      env: TARGET=x86_64-unknown-linux-musl
-      rust: beta
-      script: cargo build --release --target $TARGET
-      addons:
-        apt:
-          packages:
-            - musl-tools
-      <<: *DEPLOY_TO_GITHUB
-
-    - name: macOS Binary
-      env: MACOSX_DEPLOYMENT_TARGET=10.7 TARGET=x86_64-apple-darwin
-      os: osx
-      rust: beta
-      script: cargo build --release --target $TARGET
-      install: true
-      <<: *DEPLOY_TO_GITHUB
