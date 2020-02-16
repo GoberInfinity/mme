@@ -2,6 +2,9 @@ language: rust
 
 cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
 
+GH_TOKEN: &GH_TOKEN
+  secure: $GH_TOKEN
+
 DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
   before_deploy:
     - name="mme-$TRAVIS_TAG-$TARGET"
@@ -9,7 +12,7 @@ DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     - cp target/$TARGET/release/mme $name/
     - tar czvf $name.tar.gz $name #Use the following command to compress an entire directory or a single file on Linux
   deploy:
-    api_key: $GH_TOKEN
+    api_key: *GH_TOKEN
     provider: releases
     file: mme-$TRAVIS_TAG-$TARGET.tar.gz
     skip_cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
