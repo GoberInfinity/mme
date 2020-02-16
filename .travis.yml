@@ -9,6 +9,7 @@ DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     - cp target/$TARGET/release/mme $name/
     - tar czvf $name.tar.gz $name #Use the following command to compress an entire directory or a single file on Linux
   deploy:
+    api_key: $GH_TOKEN
     provider: releases
     file: mme-$TRAVIS_TAG-$TARGET.tar.gz
     skip_cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
