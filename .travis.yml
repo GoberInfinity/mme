@@ -1,0 +1,41 @@
+language: rust
+rust:
+  - stable
+  - beta
+
+cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
+
+DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
+  before_deploy:
+    - name="mme-$TRAVIS_TAG-$TARGET"
+    - mkdir $name
+    - cp target/$TARGET/release/mme $name/
+    - tar czvf $name.tar.gz $name #Use the following command to compress an entire directory or a single file on Linux
+  deploy:
+    provider: releases
+    file: mme-$TRAVIS_TAG-$TARGET.tar.gz
+    skip_cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
+    on:
+      branch: master
+      tags: true
+
+matrix: # Use of a matrix generates copies of a job, each with different input
+  include:
+    - name: Linux Binary
+      env: TARGET=x86_64-unknown-linux-musl
+      rust: beta
+      before_script: rustup target add $TARGET
+      script: cargo build --release --target $TARGET --locked --features vendored-openssl
+      addons:
+        apt:
+          packages:
+            - musl-tools
+      <<: *DEPLOY_TO_GITHUB
+
+    - name: macOS Binary
+      env: MACOSX_DEPLOYMENT_TARGET=10.7 TARGET=x86_64-apple-darwin
+      os: osx
+      rust: beta
+      script: cargo build --release --target $TARGET --locked
+      install: true
+      <<: *DEPLOY_TO_GITHUB
