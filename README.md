@@ -35,5 +35,5 @@ A very explanatory description
 Finally search any command by NAME or DESC:
 
 ```bash
-mme memory
+mme veryComplexCommand
 ```
