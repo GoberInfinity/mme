@@ -11,12 +11,14 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 2 {
-            return Err("not enough arguments");
-        }
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+        args.next(); // Skip name of the program
 
-        let query = args[1].clone();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
         let filename = match env::var("MME_CFS") {
             Ok(filename) => filename,
             Err(_) => return Err("MME_CFS enviroment path not found"),
@@ -92,4 +94,72 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<VecDeque<&'a str>> {
     }
 
     all
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn no_command() {
+        let not_in_query = "not";
+        let empty_command: Vec<VecDeque<&str>> = Vec::new();
+        let simple_contents = "NAME
+command
+DESC
+Description";
+
+        assert_eq!(empty_command, search(not_in_query, simple_contents));
+    }
+
+    #[test]
+    fn simple_command() {
+        let simple_query = "command";
+        let simple_contents = "NAME
+command
+DESC
+Description";
+
+        let mut simple_command = Vec::new();
+        let mut simple_lines: VecDeque<&str> = VecDeque::new();
+        simple_lines.push_back(&"NAME");
+        simple_lines.push_back(&"command");
+        simple_lines.push_back(&"DESC");
+        simple_lines.push_back(&"Description");
+        simple_command.push(simple_lines);
+
+        assert_eq!(simple_command, search(simple_query, simple_contents));
+    }
+
+    #[test]
+    fn multiple_command() {
+        let simple_query = "command";
+        let simple_contents = "NAME
+command
+DESC
+Description
+
+NAME
+command
+DESC
+Description
+
+NAME
+command
+DESC
+Description";
+
+        let mut simple_command = Vec::new();
+        let mut simple_lines: VecDeque<&str> = VecDeque::new();
+        simple_lines.push_back(&"NAME");
+        simple_lines.push_back(&"command");
+        simple_lines.push_back(&"DESC");
+        simple_lines.push_back(&"Description");
+        simple_command.push(simple_lines.clone());
+        simple_command.push(simple_lines.clone());
+        simple_command.push(simple_lines);
+
+        assert_eq!(simple_command, search(simple_query, simple_contents));
+    }
+
 }
