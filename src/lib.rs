@@ -4,32 +4,74 @@ use std::collections::VecDeque;
 use std::env;
 use std::error::Error;
 use std::fs;
+use std::fs::File;
+
+use std::io::BufRead;
+use std::io::BufReader;
+use std::iter::FromIterator;
+use std::path::Path;
 
 pub struct Config {
-    pub query: String,
-    pub filename: String,
+    pub commands_path: String,
+    pub title_color: String,
+    pub information_color: String,
 }
 
 impl Config {
-    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
-        args.next(); // Skip name of the program
-
-        let query = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a query string"),
-        };
-
-        let filename = match env::var("MME_CFS") {
+    pub fn new() -> Result<Config, &'static str> {
+        let filename = match env::var("MME_CF") {
             Ok(filename) => filename,
-            Err(_) => return Err("MME_CFS enviroment path not found"),
+            Err(_) => return Err("MME_CF enviroment path not found"),
         };
-        Ok(Config { query, filename })
+
+        let file = File::open(Path::new(&filename)).or_else(|_| {
+            return Err("Commands file not found");
+        });
+
+        let unwrapped_file = &file.unwrap();
+        let content = BufReader::new(unwrapped_file);
+        let mut commands_path: String = String::new();
+        let mut bold_color: String = String::new();
+        let mut text_color: String = String::new();
+
+        for line in content.lines() {
+            let line = line.unwrap();
+            let t_line = line.trim();
+            if t_line.is_empty() {
+                continue;
+            }
+
+            let tokens = Vec::from_iter(t_line.split_whitespace());
+            let name = tokens.first().unwrap();
+            let value: String = tokens.get(1).unwrap().to_string();
+
+            match name.to_uppercase().as_str() {
+                "COMMANDSPATH" => commands_path = value,
+                "BOLDCOLOR" => bold_color = value,
+                "TEXTCOLOR" => text_color = value,
+                _ => (),
+            }
+        }
+
+        Ok(Config {
+            commands_path: String::from(commands_path),
+            title_color: String::from(bold_color),
+            information_color: String::from(text_color),
+        })
     }
 }
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.filename)?;
-    let results = search(&config.query, &contents);
+pub fn run(config: Config, mut args: std::env::Args) -> Result<(), Box<dyn Error>> {
+    args.next(); // Skip name of the program
+
+    let query = match args.next() {
+        Some(arg) => arg,
+        None => return Err("Didn't get a query string")?,
+    };
+
+    let path = Path::new(&config.commands_path).to_str();
+    let contents = fs::read_to_string(path.unwrap())?;
+    let results = search(&query, &contents);
 
     for (i, line) in results.iter().enumerate() {
         for stri in line {
