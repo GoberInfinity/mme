@@ -1,11 +1,11 @@
-use ansi_term::Colour::Red;
+use ansi_term::Colour;
 use ansi_term::Style;
+use ansi_term::{ANSIString, ANSIStrings};
 use std::collections::VecDeque;
 use std::env;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
-
 use std::io::BufRead;
 use std::io::BufReader;
 use std::iter::FromIterator;
@@ -13,7 +13,7 @@ use std::path::Path;
 
 pub struct Config {
     pub commands_path: String,
-    pub title_color: String,
+    pub title_color: ansi_term::Colour,
     pub information_color: String,
 }
 
@@ -31,7 +31,7 @@ impl Config {
         let unwrapped_file = &file.unwrap();
         let content = BufReader::new(unwrapped_file);
         let mut commands_path: String = String::new();
-        let mut bold_color: String = String::new();
+        let mut bold_color: Colour = Colour::White;
         let mut text_color: String = String::new();
 
         for line in content.lines() {
@@ -47,7 +47,18 @@ impl Config {
 
             match name.to_uppercase().as_str() {
                 "COMMANDSPATH" => commands_path = value,
-                "BOLDCOLOR" => bold_color = value,
+                "BOLDCOLOR" => {
+                    bold_color = match value.to_ascii_lowercase().as_ref() {
+                        "black" => Colour::Cyan,
+                        "red" => Colour::Red,
+                        "green" => Colour::Green,
+                        "yellow" => Colour::Yellow,
+                        "blue" => Colour::Blue,
+                        "purple" => Colour::Purple,
+                        "cyan" => Colour::Cyan,
+                        _ => Colour::White,
+                    }
+                }
                 "TEXTCOLOR" => text_color = value,
                 _ => (),
             }
@@ -55,7 +66,7 @@ impl Config {
 
         Ok(Config {
             commands_path: String::from(commands_path),
-            title_color: String::from(bold_color),
+            title_color: bold_color,
             information_color: String::from(text_color),
         })
     }
@@ -73,25 +84,18 @@ pub fn run(config: Config, mut args: std::env::Args) -> Result<(), Box<dyn Error
     let contents = fs::read_to_string(path.unwrap())?;
     let results = search(&query, &contents);
 
-    for (i, line) in results.iter().enumerate() {
+    for line in results.iter() {
         for stri in line {
             match *stri {
-                "NAME" => print!("{}", Red.paint(*stri)),
-                "DESC" => {
-                    println!("",);
-                    print!("{}", Red.paint(*stri));
+                "NAME" | "DESC" => {
+                    let strings: &[ANSIString<'static>] =
+                        &[config.title_color.bold().paint(String::from(*stri))];
+                    println!("{}", ANSIStrings(strings));
                 }
                 _ => {
-                    println!("",);
-                    print!("     {}", Style::new().italic().paint(*stri));
+                    println!("    {}", Style::new().italic().paint(*stri));
                 }
             }
-        }
-        if i == results.len() - 1 {
-            continue;
-        } else {
-            println!("",);
-            println!("",);
         }
     }
 
