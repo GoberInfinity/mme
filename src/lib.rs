@@ -14,7 +14,7 @@ use std::path::Path;
 pub struct Config {
     pub commands_path: String,
     pub title_color: ansi_term::Colour,
-    pub information_color: String,
+    pub information_color: ansi_term::Colour,
 }
 
 impl Config {
@@ -32,7 +32,7 @@ impl Config {
         let content = BufReader::new(unwrapped_file);
         let mut commands_path: String = String::new();
         let mut bold_color: Colour = Colour::White;
-        let mut text_color: String = String::new();
+        let mut text_color: Colour = Colour::White;
 
         for line in content.lines() {
             let line = line.unwrap();
@@ -47,19 +47,8 @@ impl Config {
 
             match name.to_uppercase().as_str() {
                 "COMMANDSPATH" => commands_path = value,
-                "BOLDCOLOR" => {
-                    bold_color = match value.to_ascii_lowercase().as_ref() {
-                        "black" => Colour::Cyan,
-                        "red" => Colour::Red,
-                        "green" => Colour::Green,
-                        "yellow" => Colour::Yellow,
-                        "blue" => Colour::Blue,
-                        "purple" => Colour::Purple,
-                        "cyan" => Colour::Cyan,
-                        _ => Colour::White,
-                    }
-                }
-                "TEXTCOLOR" => text_color = value,
+                "BOLDCOLOR" => bold_color = get_color(&value),
+                "TEXTCOLOR" => text_color = get_color(&value),
                 _ => (),
             }
         }
@@ -67,9 +56,23 @@ impl Config {
         Ok(Config {
             commands_path: String::from(commands_path),
             title_color: bold_color,
-            information_color: String::from(text_color),
+            information_color: text_color,
         })
     }
+}
+
+pub fn get_color(value: &str) -> Colour {
+    let bold_color = match value.to_ascii_lowercase().as_ref() {
+        "black" => Colour::Cyan,
+        "red" => Colour::Red,
+        "green" => Colour::Green,
+        "yellow" => Colour::Yellow,
+        "blue" => Colour::Blue,
+        "purple" => Colour::Purple,
+        "cyan" => Colour::Cyan,
+        _ => Colour::White,
+    };
+    bold_color
 }
 
 pub fn run(config: Config, mut args: std::env::Args) -> Result<(), Box<dyn Error>> {
@@ -93,7 +96,9 @@ pub fn run(config: Config, mut args: std::env::Args) -> Result<(), Box<dyn Error
                     println!("{}", ANSIStrings(strings));
                 }
                 _ => {
-                    println!("    {}", Style::new().italic().paint(*stri));
+                    let strings: &[ANSIString<'static>] =
+                        &[config.information_color.paint(String::from(*stri))];
+                    println!("  {}", ANSIStrings(strings));
                 }
             }
         }
