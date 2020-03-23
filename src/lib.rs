@@ -1,5 +1,4 @@
 use ansi_term::Colour;
-use ansi_term::Style;
 use ansi_term::{ANSIString, ANSIStrings};
 use std::collections::VecDeque;
 use std::env;
