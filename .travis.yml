@@ -33,3 +33,7 @@ matrix: # Use of a matrix generates copies of a job, each with different input
       rust: beta
       script: cargo build --release --target $TARGET
       <<: *DEPLOY_TO_GITHUB
+
+notifications:
+  email:
+    on_success: never
