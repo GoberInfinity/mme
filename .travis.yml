@@ -24,7 +24,9 @@ matrix: # Use of a matrix generates copies of a job, each with different input
     - name: Linux Binary
       env: TARGET=x86_64-unknown-linux-musl
       rust: beta
-      script: cargo build --release --target $TARGET
+      script:
+        - rustup target add x86_64-unknown-linux-musl
+        - cargo build --release --target $TARGET
       <<: *DEPLOY_TO_GITHUB
 
     - name: macOS Binary
