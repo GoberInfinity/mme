@@ -9,9 +9,37 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::iter::FromIterator;
 use std::path::Path;
+use std::path::PathBuf;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+pub struct Command {
+    /// Word to search in the document specified in the configuration
+    word_to_search: Option<String>,
+
+    /// Search the word only in names
+    #[structopt(short = "n", long = "name")]
+    search_only_in_name: bool,
+    /// Search the word only in descriptions
+    #[structopt(short = "d", long = "desc")]
+    search_only_in_desc: bool,
+
+    #[structopt(subcommand)]
+    cmduser_config: Option<UConfig>,
+}
+
+#[derive(Debug, StructOpt)]
+enum UConfig {
+    /// User configuration
+    UUConfig {
+        path: String, //Change this to PathBuf
+        primary_color: String,
+        secondary_color: String,
+    },
+}
 
 pub struct Config {
-    pub commands_path: String,
+    pub commands_path: String, //Change to StringPath
     pub title_color: ansi_term::Colour,
     pub information_color: ansi_term::Colour,
 }
@@ -211,5 +239,4 @@ Description";
 
         assert_eq!(simple_command, search(simple_query, simple_contents));
     }
-
 }
