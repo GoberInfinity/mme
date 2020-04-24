@@ -5,10 +5,9 @@ use std::process;
 use structopt::StructOpt;
 
 fn main() {
-    let opt = Command::from_args();
-    println!("{:?}", opt);
+    let command_options = Command::from_args();
 
-    let config = Config::new().unwrap_or_else(|err| {
+    let config = Config::new(command_options).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });

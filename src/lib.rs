@@ -12,15 +12,18 @@ use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+/*
+TODO: Use options to put the colors of the terminal
+*/
 #[derive(Debug, StructOpt)]
 pub struct Command {
     /// Word to search in the document specified in the configuration
     word_to_search: Option<String>,
 
-    /// Search the word only in names
+    /// Searches the word only in names
     #[structopt(short = "n", long = "name")]
     search_only_in_name: bool,
-    /// Search the word only in descriptions
+    /// Searches the word only in descriptions
     #[structopt(short = "d", long = "desc")]
     search_only_in_desc: bool,
 
@@ -29,12 +32,15 @@ pub struct Command {
 }
 
 #[derive(Debug, StructOpt)]
-enum UConfig {
+pub enum UConfig {
     /// User configuration
     UUConfig {
-        path: String, //Change this to PathBuf
-        primary_color: String,
-        secondary_color: String,
+        #[structopt(long, parse(from_os_str))]
+        path: Option<PathBuf>,
+        #[structopt(long)]
+        primary_color: Option<String>,
+        #[structopt(long)]
+        secondary_color: Option<String>,
     },
 }
 
@@ -45,7 +51,33 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new() -> Result<Config, &'static str> {
+    pub fn new(options: Command) -> Result<Config, &'static str> {
+        let mut a_path = PathBuf::new();
+        let mut a_primary_color = String::from("PDefault");
+        let mut b_secondary_color = String::from("SDefault");
+        match options.cmduser_config {
+            Some(UConfig::UUConfig {
+                path,
+                primary_color,
+                secondary_color,
+            }) => {
+                match path {
+                    Some(path) => a_path.push(path),
+                    None => (),
+                }
+                match primary_color {
+                    Some(primary_color) => a_primary_color = primary_color,
+                    None => (),
+                }
+                match secondary_color {
+                    Some(secondary_color) => b_secondary_color = secondary_color,
+                    None => (),
+                }
+            }
+            None => (),
+        }
+
+        println!("{:?} {} {}", a_path, a_primary_color, b_secondary_color);
         let filename = match env::var("MME_CF") {
             Ok(filename) => filename,
             Err(_) => return Err("MME_CF enviroment path not found"),
