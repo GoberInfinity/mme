@@ -1,13 +1,18 @@
-use mme::Command;
-use mme::Config;
-use std::env;
+mod input;
+mod settings;
 use std::process;
 use structopt::StructOpt;
 
 fn main() {
-    let command_options = Command::from_args();
+    let user_input = input::Command::from_args();
 
-    let config = Config::new(command_options).unwrap_or_else(|err| {
+    let config = settings::Config::new(user_input).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+
+    /*
+    let config = Config::new(user_input).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
@@ -15,5 +20,5 @@ fn main() {
     if let Err(e) = mme::run(config, env::args()) {
         eprintln!("Application error: {}", e);
         process::exit(1);
-    }
+    }*/
 }

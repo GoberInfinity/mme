@@ -50,11 +50,14 @@ pub struct Config {
     pub information_color: ansi_term::Colour,
 }
 
+//use crate::input;
+
 impl Config {
-    pub fn new(options: Command) -> Result<Config, &'static str> {
+    pub fn new(options: String) -> Result<Config, &'static str> {
         let mut a_path = PathBuf::new();
         let mut a_primary_color = String::from("PDefault");
         let mut b_secondary_color = String::from("SDefault");
+        /*
         match options.cmduser_config {
             Some(UConfig::UUConfig {
                 path,
@@ -77,7 +80,7 @@ impl Config {
             None => (),
         }
 
-        println!("{:?} {} {}", a_path, a_primary_color, b_secondary_color);
+        println!("{:?} {} {}", a_path, a_primary_color, b_secondary_color);*/
         let filename = match env::var("MME_CF") {
             Ok(filename) => filename,
             Err(_) => return Err("MME_CF enviroment path not found"),
