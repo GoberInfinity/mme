@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -14,8 +13,8 @@ pub struct Command {
     #[structopt(short = "d", long = "desc")]
     pub search_only_in_desc: bool,
 
-    #[structopt(long, parse(from_os_str))]
-    pub path: Option<PathBuf>,
+    #[structopt(long)]
+    pub path: Option<String>,
 
     #[structopt(long)]
     pub primary_color: Option<String>,

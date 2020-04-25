@@ -1,12 +1,11 @@
 /* TODO
-    - Check that the file exists
-    - Check that the color option matches
+    - Change string to PathBuf
+    - Refactor method to change all the settings
 */
 
 use crate::input;
 use ansi_term::Colour;
-use std::path::PathBuf;
-
+use std::collections::HashMap;
 extern crate preferences;
 use preferences::{prefs_base_dir, AppInfo, Preferences, PreferencesMap};
 
@@ -16,15 +15,16 @@ const APP_INFO: AppInfo = AppInfo {
 };
 const KEY: &str = "mme";
 
+#[derive(Debug)]
 pub struct Config {
-    pub commands_path: PathBuf,
+    pub commands_path: String,
     pub title_color: ansi_term::Colour,
     pub information_color: ansi_term::Colour,
 }
 
 impl Config {
     pub fn new(user_input: input::Command) -> Result<Config, &'static str> {
-        let mut current_path = PathBuf::new();
+        let mut current_path = String::new();
         let mut current_primary_color = String::new();
         let mut current_secondary_color = String::new();
         let mut new_config = false;
@@ -44,7 +44,7 @@ impl Config {
             None => (),
         }
 
-        if !current_path.as_os_str().is_empty()
+        if !current_path.is_empty()
             || !current_primary_color.is_empty()
             || !current_secondary_color.is_empty()
         {
@@ -60,7 +60,7 @@ impl Config {
                 } else {
                     // If it doesn't find the path but has the color configurations,
                     // check that the user provided a new path
-                    if current_path.as_os_str().is_empty() {
+                    if current_path.is_empty() {
                         return Err("Path not configured yet inside");
                     } else {
                         user_preferences
@@ -69,7 +69,7 @@ impl Config {
             }
             Err(_) => {
                 // If the preferences doesn't exist and the user didn't type the new path
-                if current_path.as_os_str().is_empty() {
+                if current_path.is_empty() {
                     return Err("Path not configured yet");
                 } else {
                     PreferencesMap::new()
@@ -77,49 +77,31 @@ impl Config {
             }
         };
 
-        let mut path_match = &String::from("commands_path");
-        let mut fc_match = &String::from("head_color");
-        let mut sc_match = &String::from("text_color");
+        let keys = vec![
+            String::from("commands_path"),
+            String::from("head_color"),
+            String::from("text_color"),
+        ];
+
+        Config::change_preference_if_new(current_path, &mut user_preferences, &keys[0]);
+        Config::change_preference_if_new(current_primary_color, &mut user_preferences, &keys[1]);
+        Config::change_preference_if_new(current_secondary_color, &mut user_preferences, &keys[2]);
 
         if new_config {
-            user_preferences.insert(
-                path_match.to_string(),
-                current_path.clone().into_os_string().into_string().unwrap(),
-            );
-            user_preferences.insert(fc_match.to_string(), current_primary_color);
-            user_preferences.insert(sc_match.to_string(), current_secondary_color);
             match user_preferences.save(&APP_INFO, &KEY) {
                 Ok(_) => println!("Configuration saved inside: {:?}", prefs_base_dir()),
                 Err(_) => return Err("Cannot save your preferences"),
             }
         }
 
-        /*
-            // Assign the new values to the configuration
-            for (key, val) in user_preferences.iter() {
-                match (key, val) {
-                    (path_match, val) if current_path.as_os_str().is_empty() => {
-                        current_path = PathBuf::from(val)
-                    }
-                    (fc_match, val) if current_primary_color.is_empty() => {
-                        current_primary_color = String::from(val)
-                    }
-                    (sc_match, val) if current_secondary_color.is_empty() => {
-                        current_secondary_color = String::from(val)
-                    }
-                    _ => (),
-                }
-            }
-        */
-
         Ok(Config {
-            commands_path: current_path,
-            title_color: Colour::White,
-            information_color: Colour::White,
+            commands_path: String::from(user_preferences.get(&keys[0]).unwrap()),
+            title_color: Config::get_color(user_preferences.get(&keys[1]).unwrap()),
+            information_color: Config::get_color(user_preferences.get(&keys[2]).unwrap()),
         })
     }
 
-    fn get_color(str_color: String) -> Colour {
+    fn get_color(str_color: &String) -> Colour {
         match str_color.to_lowercase().as_str() {
             "black" => Colour::Cyan,
             "red" => Colour::Red,
@@ -129,6 +111,29 @@ impl Config {
             "purple" => Colour::Purple,
             "cyan" => Colour::Cyan,
             _ => Colour::White,
+        }
+    }
+
+    fn change_preference_if_new(
+        new_value: String,
+        map: &mut HashMap<String, String>,
+        key: &String,
+    ) {
+        match map.contains_key(key) {
+            true => {
+                // New configuration
+                if !new_value.is_empty() {
+                    map.insert(String::from(key), new_value);
+                }
+            }
+            false => {
+                // First time configuration with a new value
+                if !new_value.is_empty() {
+                    map.insert(String::from(key), new_value);
+                } else {
+                    map.insert(String::from(key), String::from(""));
+                }
+            }
         }
     }
 }
