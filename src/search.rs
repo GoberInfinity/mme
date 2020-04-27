@@ -5,6 +5,9 @@ use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
+// TODO: - Improve the way that you print the information to the user, maybe an private struct
+//  - Debug command line with name in multiple lines
+
 pub fn print_with_configuration(
     user_input: &input::Command,
     config: &settings::Config,
@@ -29,18 +32,36 @@ pub fn print_with_configuration(
 
     for line in results.iter() {
         for stri in line {
-            match *stri {
-                "NAME" | "DESC" => {
+            let first_char = stri.chars().next();
+            let mut skip = false;
+            let mut text = String::new();
+
+            match first_char {
+                Some('#') => {
                     let strings: &[ANSIString<'static>] =
-                        &[config.title_color.bold().paint(String::from(*stri))];
+                        &[config.title_color.bold().paint(String::from("NAME"))];
                     println!("{}", ANSIStrings(strings));
+                    skip = true;
                 }
-                _ => {
+
+                Some('>') => {
                     let strings: &[ANSIString<'static>] =
-                        &[config.information_color.paint(String::from(*stri))];
-                    println!("  {}", ANSIStrings(strings));
+                        &[config.title_color.bold().paint(String::from("DESC"))];
+                    println!("{}", ANSIStrings(strings));
+                    skip = true;
                 }
+                _ => (),
             }
+
+            if skip {
+                let (_, info) = stri.split_at('#'.len_utf8());
+                text = String::from(info);
+            } else {
+                text = String::from(*stri);
+            }
+
+            let strings: &[ANSIString<'static>] = &[config.information_color.paint(text)];
+            println!("  {}", ANSIStrings(strings));
         }
     }
 
@@ -65,12 +86,13 @@ fn search<'a>(
     };
 
     for (i, line) in contents.lines().enumerate() {
-        let first_char = line.chars().next();
         let empty_line = line.trim().is_empty();
 
         if !empty_line {
             buffer_lines.push_back(line);
         }
+
+        let first_char = line.chars().next();
 
         match first_char {
             Some(first_char) => match first_char {
