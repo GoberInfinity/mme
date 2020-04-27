@@ -64,36 +64,40 @@ fn search<'a>(
 
     for (i, line) in contents.lines().enumerate() {
         let first_char = line.chars().next();
-        let type_of_line = match first_char {
-            Some(first_char) => match first_char {
-                '#' => 1,
-                '>' => 2,
-                _ => 2,
-            },
-            None => 0, // Empty line
-        };
+        let empty_line = line.trim().is_empty();
 
-        if line.trim().is_empty() || i == size_doc - 1 {
+        if !empty_line {
+            buffer_lines.push_back(line);
+        }
+
+        match first_char {
+            Some(first_char) => match first_char {
+                '#' => {
+                    if *by_desc {
+                        continue;
+                    }
+                }
+                '>' => {
+                    if *by_head {
+                        continue;
+                    }
+                }
+                _ => (),
+            },
+            None => (), // Empty line
+        }
+
+        if line.to_lowercase().contains(&query) {
+            found = true;
+        }
+
+        if empty_line || i == size_doc - 1 {
             if found {
                 all.push(buffer_lines.clone());
                 found = false;
             }
             buffer_lines.clear();
             continue;
-        }
-
-        buffer_lines.push_back(line);
-
-        if *by_head && (type_of_line != 1) {
-            continue;
-        }
-
-        if *by_desc && (type_of_line != 2) {
-            continue;
-        }
-
-        if line.to_lowercase().contains(&query) {
-            found = true;
         }
     }
 
