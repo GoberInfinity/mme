@@ -5,9 +5,6 @@ use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
-// TODO: - Improve the way that you print the information to the user, maybe an private struct
-//  - Debug command line with name in multiple lines
-
 pub fn print_with_configuration(
     user_input: &input::Command,
     config: &settings::Config,
@@ -31,36 +28,24 @@ pub fn print_with_configuration(
     );
 
     for line in results.iter() {
-        for stri in line {
-            let first_char = stri.chars().next();
-            let mut skip = false;
-            let mut text = String::new();
-
-            match first_char {
-                Some('#') => {
+        for (title, info) in line {
+            match title {
+                &"NAME" => {
                     let strings: &[ANSIString<'static>] =
                         &[config.title_color.bold().paint(String::from("NAME"))];
                     println!("{}", ANSIStrings(strings));
-                    skip = true;
                 }
 
-                Some('>') => {
+                &"DESC" => {
                     let strings: &[ANSIString<'static>] =
                         &[config.title_color.bold().paint(String::from("DESC"))];
                     println!("{}", ANSIStrings(strings));
-                    skip = true;
                 }
                 _ => (),
             }
 
-            if skip {
-                let (_, info) = stri.split_at('#'.len_utf8());
-                text = String::from(info);
-            } else {
-                text = String::from(*stri);
-            }
-
-            let strings: &[ANSIString<'static>] = &[config.information_color.paint(text)];
+            let strings: &[ANSIString<'static>] =
+                &[config.information_color.paint(String::from(*info))];
             println!("  {}", ANSIStrings(strings));
         }
     }
@@ -73,10 +58,10 @@ fn search<'a>(
     contents: &'a str,
     by_desc: &bool,
     by_head: &bool,
-) -> Vec<VecDeque<&'a str>> {
+) -> Vec<VecDeque<(&'a str, &'a str)>> {
     let query = query.to_lowercase();
     let mut found = false;
-    let mut buffer_lines: VecDeque<&str> = VecDeque::new();
+    let mut n_b: VecDeque<(&str, &str)> = VecDeque::new();
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
 
@@ -87,33 +72,41 @@ fn search<'a>(
 
     for (i, line) in contents.lines().enumerate() {
         let empty_line = line.trim().is_empty();
+        let end_of_file = i == size_doc - 1;
 
         if !empty_line {
-            buffer_lines.push_back(line);
-        }
-
-        let first_char = line.chars().next();
-
-        match first_char {
-            Some(first_char) => match first_char {
-                '#' if *by_desc && !by_all => continue,
-                '>' if *by_head && !by_all => continue,
-                _ => (),
-            },
-            None => (), // Empty line
+            match line.chars().next() {
+                Some(first_char) => match first_char {
+                    '#' => {
+                        let (_, info) = line.split_at('#'.len_utf8());
+                        n_b.push_back(("NAME", info));
+                        if *by_desc && !by_all {
+                            continue;
+                        }
+                    }
+                    '>' => {
+                        let (_, info) = line.split_at('>'.len_utf8());
+                        n_b.push_back(("DESC", info));
+                        if *by_head && !by_all && !end_of_file {
+                            continue;
+                        }
+                    }
+                    _ => n_b.push_back(("   ", line)),
+                },
+                None => (),
+            }
         }
 
         if line.to_lowercase().contains(&query) {
             found = true;
         }
 
-        if empty_line || i == size_doc - 1 {
+        if empty_line || end_of_file {
             if found {
-                all.push(buffer_lines.clone());
+                all.push(n_b.clone());
                 found = false;
             }
-            buffer_lines.clear();
-            continue;
+            n_b.clear();
         }
     }
 
