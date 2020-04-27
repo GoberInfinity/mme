@@ -5,9 +5,6 @@ use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
-//TODO: - Improve the way how the user has to put the information
-//      - Check if by desc and by name is in the input
-
 pub fn print_with_configuration(
     user_input: &input::Command,
     config: &settings::Config,
@@ -62,6 +59,11 @@ fn search<'a>(
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
 
+    let by_all = match (by_head, by_desc) {
+        (true, true) => true,
+        (_, _) => false,
+    };
+
     for (i, line) in contents.lines().enumerate() {
         let first_char = line.chars().next();
         let empty_line = line.trim().is_empty();
@@ -72,16 +74,8 @@ fn search<'a>(
 
         match first_char {
             Some(first_char) => match first_char {
-                '#' => {
-                    if *by_desc {
-                        continue;
-                    }
-                }
-                '>' => {
-                    if *by_head {
-                        continue;
-                    }
-                }
+                '#' if *by_desc && !by_all => continue,
+                '>' if *by_head && !by_all => continue,
                 _ => (),
             },
             None => (), // Empty line
