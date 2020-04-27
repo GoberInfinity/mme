@@ -1,6 +1,8 @@
 /* TODO
     - Change string to PathBuf
-    - Refactor method to change all the settings
+    - Refactor function change_preference_if_new to iterate instead of changing individually
+    - Decide what happens when the user want to change the configuration and no word is provided
+        - mme _ => nothing mme -a => means print all
 */
 
 use crate::input;
@@ -23,24 +25,24 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(user_input: input::Command) -> Result<Config, &'static str> {
+    pub fn new(user_input: &input::Command) -> Result<Config, &'static str> {
         let mut current_path = String::new();
         let mut current_primary_color = String::new();
         let mut current_secondary_color = String::new();
         let mut new_config = false;
 
-        match user_input.path {
-            Some(path) => current_path = path,
+        match &user_input.path {
+            Some(path) => current_path = path.to_string(),
             None => (),
         }
 
-        match user_input.primary_color {
-            Some(primary_color) => current_primary_color = primary_color,
+        match &user_input.primary_color {
+            Some(primary_color) => current_primary_color = primary_color.to_string(),
             None => (),
         }
 
-        match user_input.secondary_color {
-            Some(secondary_color) => current_secondary_color = secondary_color,
+        match &user_input.secondary_color {
+            Some(secondary_color) => current_secondary_color = secondary_color.to_string(),
             None => (),
         }
 
