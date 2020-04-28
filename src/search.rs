@@ -5,6 +5,8 @@ use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
+/* TODO: - Bug when passing # or > (it prints all) */
+
 pub fn print_with_configuration(
     user_input: &input::Command,
     config: &settings::Config,

@@ -1,8 +1,7 @@
 /* TODO
     - Change string to PathBuf
     - Refactor function change_preference_if_new to iterate instead of changing individually
-    - Decide what happens when the user want to change the configuration and no word is provided
-        - mme _ => nothing mme -a => means print all
+    - Check how to pass arguments to search like -a edit: mme -- -a, put an example in the readme
 */
 
 use crate::input;

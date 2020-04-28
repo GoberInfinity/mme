@@ -4,6 +4,8 @@ mod settings;
 use std::process;
 use structopt::StructOpt;
 
+/* TODO: - Create all the test modules */
+
 fn main() {
     let user_input = input::Command::from_args();
 
