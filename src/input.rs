@@ -22,3 +22,11 @@ pub struct Command {
     #[structopt(long)]
     pub secondary_color: Option<String>,
 }
+
+fn add(one: i32) -> i32 {
+    one + one
+}
+
+//#[path = "tests/uinput.rs"]
+#[cfg(test)]
+mod test;
