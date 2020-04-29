@@ -102,19 +102,6 @@ impl Config {
         })
     }
 
-    fn get_color(str_color: &String) -> Colour {
-        match str_color.to_lowercase().as_str() {
-            "black" => Colour::Cyan,
-            "red" => Colour::Red,
-            "green" => Colour::Green,
-            "yellow" => Colour::Yellow,
-            "blue" => Colour::Blue,
-            "purple" => Colour::Purple,
-            "cyan" => Colour::Cyan,
-            _ => Colour::White,
-        }
-    }
-
     fn change_preference_if_new(
         new_value: String,
         map: &mut HashMap<String, String>,
@@ -137,4 +124,20 @@ impl Config {
             }
         }
     }
+
+    fn get_color(str_color: &String) -> Colour {
+        match str_color.to_lowercase().as_str() {
+            "black" => Colour::Cyan,
+            "red" => Colour::Red,
+            "green" => Colour::Green,
+            "yellow" => Colour::Yellow,
+            "blue" => Colour::Blue,
+            "purple" => Colour::Purple,
+            "cyan" => Colour::Cyan,
+            _ => Colour::White,
+        }
+    }
 }
+
+#[cfg(test)]
+mod test;
