@@ -1,7 +1,7 @@
 /* TODO
     - Change string to PathBuf
     - Refactor function change_preference_if_new to iterate instead of changing individually
-    - Check how to pass arguments to search like -a edit: mme -- -a, put an example in the readme
+    - Add to the readme mme -- -a as an example
 */
 
 use crate::input;

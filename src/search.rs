@@ -5,7 +5,9 @@ use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
-/* TODO: - Bug when passing # or > (it prints all) */
+/* TODO: - Bug when passing # or > (it prints all) -> search using mme -- "mme -ls ##"
+        - Check the support to non-ascii strings
+*/
 
 pub fn print_with_configuration(
     user_input: &input::Command,
@@ -80,6 +82,7 @@ fn search<'a>(
             match line.chars().next() {
                 Some(first_char) => match first_char {
                     '#' => {
+                        //Divide one string slice into two at an index.
                         let (_, info) = line.split_at('#'.len_utf8());
                         n_b.push_back(("NAME", info));
                         if *by_desc && !by_all {
@@ -99,8 +102,13 @@ fn search<'a>(
             }
         }
 
-        if line.to_lowercase().contains(&query) {
-            found = true;
+        match n_b.back() {
+            Some(line) => {
+                if line.1.to_lowercase().contains(&query) {
+                    found = true;
+                }
+            }
+            _ => (),
         }
 
         if empty_line || end_of_file {
