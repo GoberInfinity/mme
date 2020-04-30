@@ -48,6 +48,7 @@ fn search_using<'a>(
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
     let mut last_type = '#';
+    let mut search = true;
 
     let by_all = match (by_head, by_desc) {
         (true, true) => true,
@@ -67,29 +68,33 @@ fn search_using<'a>(
                         n_b.push_back(("NAME", info));
                         last_type = '#';
                         if *by_desc && !by_all {
-                            continue;
+                            search = false;
                         }
                     }
                     '>' => {
                         let (_, info) = line.split_at('>'.len_utf8());
                         n_b.push_back(("DESC", info));
                         last_type = '>';
-                        //end_of_file prevents to skis the last part of the code if the iterator reach the end of the file
-                        if *by_head && !by_all && !end_of_file {
-                            continue;
+                        //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
+                        if *by_head && !by_all && end_of_file {
+                            search = false;
+                        } else if *by_head && !by_all {
+                            search = false;
                         }
                     }
                     _ => match last_type {
                         '#' => {
                             n_b.push_back(("   ", line));
                             if *by_desc && !by_all {
-                                continue;
+                                search = false;
                             }
                         }
                         '>' => {
                             n_b.push_back(("   ", line));
-                            if *by_head && !by_all && !end_of_file {
-                                continue;
+                            if *by_head && !by_all && end_of_file {
+                                search = false;
+                            } else if *by_head && !by_all {
+                                search = false;
                             }
                         }
                         _ => (),
@@ -98,18 +103,19 @@ fn search_using<'a>(
                 None => (),
             }
 
-            match n_b.back() {
-                Some(line) => {
-                    if line.1.to_lowercase().contains(&query) {
-                        found = true;
+            if search {
+                match n_b.back() {
+                    Some(line) => {
+                        if line.1.to_lowercase().contains(&query) {
+                            found = true;
+                        }
                     }
+                    _ => (),
                 }
-                _ => (),
             }
         }
 
         if empty_line || end_of_file {
-            //println!("Found in {} {}", i, found);
             if found {
                 all.push(n_b.clone());
                 found = false;
@@ -117,6 +123,8 @@ fn search_using<'a>(
             last_type = '#';
             n_b.clear();
         }
+
+        search = true;
     }
 
     all
