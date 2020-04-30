@@ -2,7 +2,7 @@ use structopt::StructOpt;
 
 pub const BINARY: &str = "mme";
 pub const PATH: &str = "--path";
-pub const INPUT_PATH: &str = "file";
+pub const INPUT_PATH: &str = "../examples/c";
 pub const PRIMARY: &str = "--primary-color";
 pub const INPUT_PRIMARY: &str = "black";
 pub const SECONDARY: &str = "--secondary-color";
