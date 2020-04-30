@@ -139,7 +139,7 @@ impl Config {
 
     fn get_color(str_color: &String) -> Colour {
         match str_color.to_lowercase().as_str() {
-            "black" => Colour::Cyan,
+            "black" => Colour::Black,
             "red" => Colour::Red,
             "green" => Colour::Green,
             "yellow" => Colour::Yellow,
