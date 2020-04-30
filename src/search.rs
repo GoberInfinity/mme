@@ -108,10 +108,6 @@ fn search_using<'a>(
             }
         }
 
-        println!(
-            "is empty {} is final line {}, line {}",
-            empty_line, end_of_file, line
-        );
         if empty_line || end_of_file {
             //println!("Found in {} {}", i, found);
             if found {
