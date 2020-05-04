@@ -1,5 +1,6 @@
 /* TODO: - Add to readme mme -- "mme -ls ##"
         - Add parameter to print all
+        - Use aho-corasick to search and print in different colors?
 */
 
 use crate::input;

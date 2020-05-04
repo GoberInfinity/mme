@@ -1,4 +1,5 @@
 use structopt::StructOpt;
+// TODO: Change the name of the long parameters
 
 #[derive(Debug, PartialEq, StructOpt)]
 pub struct Command {
