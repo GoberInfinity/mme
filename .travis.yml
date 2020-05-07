@@ -16,7 +16,7 @@ _DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     on:
       branch: master
       tags: true
-    token: $GH_TOKEN
+    token: "kJ/Fq/n9QAapqdfwNFQ+UeeqHf9UDn2WB+q0QyGRLeCq+ixPBYrTexk2voR4trfVwO5Ptr3niJmm90PePsPDASsuq4jiWqX2xG0eutcfONgqCEdTlgdMfgWluGBz5kHeTkvS2IMH2CNA/WdaG7mDmbUrgCsnLHRPgjfnMdWpS9es7fTXu+OSsNtFRHLAoE2QRCas1xRdpqTRCT5CE0S847aO0shURa9PKmZDwsVyIV1zBZNUWPie8VC76zx0cVW/u/zoi7qjDg6anCvPIrk1qqRDwMFXNEsUi00u7EiEQtanBYgou893y192AP191HHWFB4/hRECaZNGVcg7MWQNgquaLMaw/U1srkzmMPuTXjXiPuOu4K5mW6UtZ0LMA05hD+wEyNAt38AUXA+Hr8Mzr3DxGcXeSHLtTBiykHWiyFMQ2b57YWByBx5WTlFkh127AZ8eVwjIgEw38B99XT8Io4cDwRpjXj5NRmUHtPn20bRAZ2G64J59aRyMkr47bGrGBRuNUIBwU372CzOJRfPio3SZAfxTel5LblJyMO9vnF8SIoI280vApkwL+9bfbIwxCf+dwLKcJ5XhZ8fEaF7f2rOyUNxzK/BJBHmSSoL1pgVYtijEV2e779LMy61hmhPcZQcc9/GD9E9dmRwxrJMSE78s4BdvQv2gk2EK5vvfGew="
 
 matrix: # Use of a matrix generates copies of a job, each with different input
   include:
