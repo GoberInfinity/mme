@@ -1,24 +1,20 @@
 language: rust
-
-cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
-
-_DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
-  before_deploy:
+cache: cargo
+_DEPLOY_TO_GITHUB:
+  before_deploy: &1
     - name="mme-$TRAVIS_TAG-$TARGET"
     - mkdir $name
     - cp target/$TARGET/release/mme $name/
-    - tar czvf $name.tar.gz $name #Use the following command to compress an entire directory or a single file on Linux
-  deploy:
+    - tar czvf $name.tar.gz $name
+  deploy: &2
     edge: true
     provider: releases
     file: mme-$TRAVIS_TAG-$TARGET.tar.gz
-    cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
+    cleanup: true
     on:
       branch: master
       tags: true
-    token: "kJ/Fq/n9QAapqdfwNFQ+UeeqHf9UDn2WB+q0QyGRLeCq+ixPBYrTexk2voR4trfVwO5Ptr3niJmm90PePsPDASsuq4jiWqX2xG0eutcfONgqCEdTlgdMfgWluGBz5kHeTkvS2IMH2CNA/WdaG7mDmbUrgCsnLHRPgjfnMdWpS9es7fTXu+OSsNtFRHLAoE2QRCas1xRdpqTRCT5CE0S847aO0shURa9PKmZDwsVyIV1zBZNUWPie8VC76zx0cVW/u/zoi7qjDg6anCvPIrk1qqRDwMFXNEsUi00u7EiEQtanBYgou893y192AP191HHWFB4/hRECaZNGVcg7MWQNgquaLMaw/U1srkzmMPuTXjXiPuOu4K5mW6UtZ0LMA05hD+wEyNAt38AUXA+Hr8Mzr3DxGcXeSHLtTBiykHWiyFMQ2b57YWByBx5WTlFkh127AZ8eVwjIgEw38B99XT8Io4cDwRpjXj5NRmUHtPn20bRAZ2G64J59aRyMkr47bGrGBRuNUIBwU372CzOJRfPio3SZAfxTel5LblJyMO9vnF8SIoI280vApkwL+9bfbIwxCf+dwLKcJ5XhZ8fEaF7f2rOyUNxzK/BJBHmSSoL1pgVYtijEV2e779LMy61hmhPcZQcc9/GD9E9dmRwxrJMSE78s4BdvQv2gk2EK5vvfGew="
-
-matrix: # Use of a matrix generates copies of a job, each with different input
+matrix:
   include:
     - name: Linux Binary
       env: TARGET=x86_64-unknown-linux-musl
@@ -26,15 +22,17 @@ matrix: # Use of a matrix generates copies of a job, each with different input
       script:
         - rustup target add x86_64-unknown-linux-musl
         - cargo build --release --target $TARGET
-      <<: *DEPLOY_TO_GITHUB
-
+      before_deploy: *1
+      deploy: *2
     - name: macOS Binary
       env: MACOSX_DEPLOYMENT_TARGET=10.7 TARGET=x86_64-apple-darwin
       os: osx
       rust: beta
       script: cargo build --release --target $TARGET
-      <<: *DEPLOY_TO_GITHUB
-
+      before_deploy: *1
+      deploy: *2
 notifications:
   email:
     on_success: never
+token:
+  secure: EGdHzO0j89/beuFbH/IFsUuOj8jEn0z5E1GFHnl7HDHiWiI5v3lXXOfhuYM5c2DfZHuDFtHmuBy+A7MsUSmcV8t2xxic58Jzg31yMkBKjKorDhzQo5VtDe1IhAvJQm7Vtd4N0GKNFu2uslAbmv9m7rU4/JyDPL4AppF3/3l2h8Vc8+J9fh2TC6HLR2Knd0yZSElqTT/0rcj0Uqo8Q+7NYFYEm9ZMQoHLCeX4GUQPnFxyhQZVy18EFZ8vuEtsUJztVdYOAcbaiUbghkQoq8XG3T9+8wriSTICzq4KFNKjHJHnDbSIgSA8gO+pDAV8fMvDg1YOcbTnpwB3MyjXhiQCBgJghDt6qk3ZnQnVKt2T2E7M5hVoWUqtJtxKHSUiz9vH/U/wShoqLbJOwF9calgQAmokwbduZQwMeTU19HvxwgPNUAwT+RVzXfK4d0dBjjk4lXlWJn/YLNJmC5iRPJ/EOZB7c31tcSNjGciowl1N614SUb7VRovYx4qwtNuJAo35vL2kdS+ntGgP52N73Omr0KHj4D1dHiIXHZzDc8MACCHTSDMtRTifHOF4MaY8cNcLkd/xXgv+I4K8Df6odWXt6XbSmOcgE6Kf19B85goTzMjRI0OEyxamvMYmJxfsMfVTa6rMqAUaKhk7WQkAWOiJvcZUetfczeRbWtiBkQW4hlk=
