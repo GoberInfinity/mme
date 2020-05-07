@@ -12,28 +12,64 @@ The binary name for rememberme is mme.
 
 ## Usage
 
-You have to create the enviroment variable **MME_CFS** and set its value with the path where the file is going to be.
+### Basic configuration
+
+You need to specify the path of the file that contains your commands.
 
 ```bash
-export MME_CFS = "~/../yourCommandFile"
+mme --path ~/my_commands
 ```
 
-Inside **yourCommandFile** put all the commands you want to remember in the following structure:
+The file where `mme` is going to search must have the following structure:
 
 ```
-NAME
-veryComplexCommand -a
-DESC
-A very explanatory description
+# veryComplexCommand -a
+> A very explanatory description
 
-NAME
-veryComplexCommand -b
-DESC
-A very explanatory description
+# veryComplexCommand
+-b
+-c
+-d
+> A very explanatory description
+-b means b
+-c means c
+-d means d
 ```
 
-Finally search any command by NAME or DESC:
+The `#` indicates a command and `>` its corresponding description, you need to leave a blank line to separate the commands.
+
+### Extra configuration
+
+You can change the color of the titles and the text. The available colors are: black, red, green, yellow, blue, purple, cyan and white.
+
+```bash
+mme --primary-color blue --secondary-color green
+```
+
+### Searching
+
+You can search by all (name and description):
 
 ```bash
 mme veryComplexCommand
+```
+
+Only by name:
+
+```bash
+mme -n veryComplexCommand
+```
+
+Only by description:
+
+```bash
+mme -d veryComplexCommand
+```
+
+### Special Searching
+
+If you want to search a word with special characters you need to add `--` after you enter all the flags:
+
+```bash
+mme -d -- -something
 ```
