@@ -2,7 +2,7 @@ language: rust
 
 cache: cargo # Cache dependencies so they are only recompiled if they or the compiler were upgraded
 
-DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
+_DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
   before_deploy:
     - name="mme-$TRAVIS_TAG-$TARGET"
     - mkdir $name
@@ -12,7 +12,7 @@ DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     edge: true
     provider: releases
     file: mme-$TRAVIS_TAG-$TARGET.tar.gz
-    skip_cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
+    cleanup: true #skip_cleanup set to true, otherwise Travis will delete all the files created during the build
     on:
       branch: master
       tags: true
