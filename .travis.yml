@@ -10,7 +10,6 @@ _DEPLOY_TO_GITHUB:
     edge: true
     provider: releases
     file: mme-$TRAVIS_TAG-$TARGET.tar.gz
-    cleanup: true
     on:
       branch: master
       tags: true
