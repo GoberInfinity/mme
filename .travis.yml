@@ -16,8 +16,7 @@ _DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     on:
       branch: master
       tags: true
-    api_key:
-      secure: $GH_TOKEN
+    api_key: $GH_TOKEN
 
 matrix: # Use of a matrix generates copies of a job, each with different input
   include:
