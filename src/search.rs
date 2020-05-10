@@ -3,7 +3,6 @@
 
 use crate::input;
 use crate::settings;
-use ansi_term::Colour::Red;
 use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::collections::VecDeque;
 use std::fs;
@@ -36,6 +35,7 @@ pub fn print_with_configuration(
         &mut results_indexes,
         config.title_color,
         config.information_color,
+        word,
     );
 
     Ok(())
@@ -146,40 +146,13 @@ fn print_search_results(
     indexes: &mut Vec<VecDeque<usize>>,
     command_color: Colour,
     desc_color: Colour,
+    word: &str,
 ) {
     for (i, line) in results.iter().enumerate() {
         let current_match = &indexes[i];
         let mut last = 0;
         for (j, current) in line.iter().enumerate() {
             let (title, info) = current;
-
-            if !(current_match.len() == last) && j == *current_match.get(last).unwrap() {
-                let mut result: Vec<ANSIString> = Vec::new();
-                let mut last_inn = 0;
-
-                for (index, matched) in info.match_indices("ls") {
-                    // word
-                    if last_inn != index {
-                        let res = &info[last_inn..index];
-                        let word = desc_color.paint(res);
-                        result.push(word);
-                    }
-                    //special character
-                    let word = Red.bold().paint(matched);
-                    result.push(word);
-                    last_inn = index + matched.len();
-                }
-                if last_inn < info.len() {
-                    let res = &info[last_inn..];
-                    let word = desc_color.bold().paint(res);
-                    result.push(word);
-                }
-                //println!("{:?}", result);
-                last += 1;
-
-                let strings: &[ANSIString] = &result;
-                println!("  {}", ANSIStrings(strings));
-            }
 
             match title {
                 &"NAME" => {
@@ -196,8 +169,37 @@ fn print_search_results(
                 _ => (),
             }
 
-            let strings: &[ANSIString<'static>] = &[desc_color.paint(String::from(*info))];
-            println!("  {}", ANSIStrings(strings));
+            if !(current_match.len() == last) && j == *current_match.get(last).unwrap() {
+                let mut result: Vec<ANSIString> = Vec::new();
+                let mut last_inn = 0;
+                let lower_case_line = info.to_lowercase();
+
+                for (index, matched) in lower_case_line.match_indices(word) {
+                    // text
+                    if last_inn != index {
+                        let res = &info[last_inn..index];
+                        let word = desc_color.paint(res);
+                        result.push(word);
+                    }
+                    //word
+                    last_inn = index + matched.len();
+                    let orignal_word = &info[index..last_inn];
+                    let word = command_color.bold().paint(orignal_word);
+                    result.push(word);
+                }
+                if last_inn < info.len() {
+                    let res = &info[last_inn..];
+                    let word = desc_color.paint(res);
+                    result.push(word);
+                }
+                last += 1;
+
+                let strings: &[ANSIString] = &result;
+                println!("  {}", ANSIStrings(strings));
+            } else {
+                let strings: &[ANSIString<'static>] = &[desc_color.paint(String::from(*info))];
+                println!("  {}", ANSIStrings(strings));
+            }
         }
     }
 }
