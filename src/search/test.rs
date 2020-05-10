@@ -55,6 +55,7 @@ const D_RESULT_ML_1: (&str, &str) = ("DESC", "Creates");
 const D_RESULT_ML_2: (&str, &str) = ("   ", "secure");
 const D_RESULT_ML_3: (&str, &str) = ("   ", "connection");
 
+/*
 #[test]
 fn command_by_name_in_file_with_one_command() {
     let expected_result: Vec<VecDeque<(&str, &str)>> =
@@ -220,3 +221,4 @@ fn command_in_multiple_lines_by_desc_in_file() {
         expected_result
     );
 }
+*/

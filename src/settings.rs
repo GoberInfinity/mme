@@ -1,18 +1,17 @@
 /* TODO
     - Change string to PathBuf
-    - Add to the readme mme -- -a as an example
     - Add method to support RGB colors
 */
 
-use crate::input;
 use ansi_term::Colour;
 use preferences::{prefs_base_dir, AppInfo, Preferences, PreferencesError, PreferencesMap};
 use std::collections::HashMap;
 
 const KEY: &str = "mme";
 const PATH: &str = "commands_path";
-const TCOLOR: &str = "text_color";
-const HCOLOR: &str = "head_color";
+const PCOLOR: &str = "text_color";
+const SCOLOR: &str = "head_color";
+const HCOLOR: &str = "highlight_color";
 
 const APP_INFO: AppInfo = AppInfo {
     name: "preferences",
@@ -24,66 +23,60 @@ pub struct Config {
     pub commands_path: String,
     pub title_color: ansi_term::Colour,
     pub information_color: ansi_term::Colour,
+    pub highlight_color: ansi_term::Colour,
 }
 
 impl Config {
-    pub fn new(user_input: &input::Command) -> Result<Config, &'static str> {
-        let mut current_path = String::new();
-        let mut current_primary_color = String::new();
-        let mut current_secondary_color = String::new();
-        let mut new_config = false;
+    pub fn new(
+        path: &Option<String>,
+        primary_color: &Option<String>,
+        secondary_color: &Option<String>,
+        highlight_color: &Option<String>,
+    ) -> Result<Config, &'static str> {
+        let current_path = path.as_deref().unwrap_or("");
+        let current_primary_color = primary_color.as_deref().unwrap_or("");
+        let current_secondary_color = secondary_color.as_deref().unwrap_or("");
+        let current_highlight_color = highlight_color.as_deref().unwrap_or("");
 
-        match &user_input.path {
-            Some(path) => current_path = path.to_string(),
-            None => (),
-        }
-
-        match &user_input.primary_color {
-            Some(primary_color) => current_primary_color = primary_color.to_string(),
-            None => (),
-        }
-
-        match &user_input.secondary_color {
-            Some(secondary_color) => current_secondary_color = secondary_color.to_string(),
-            None => (),
-        }
-
-        if !current_path.is_empty()
+        let new_config = !current_path.is_empty()
             || !current_primary_color.is_empty()
             || !current_secondary_color.is_empty()
-        {
-            new_config = true;
-        }
+            || !current_highlight_color.is_empty();
 
-        let mut user_preferences = match Config::get_preferences(
+        let mut current_preferences = match Config::get_preferences(
             PreferencesMap::<String>::load(&APP_INFO, &KEY),
             &current_path,
         ) {
-            Ok(preferences) => preferences,
+            Ok(previous_preferences) => previous_preferences,
             Err(_) => return Err("Path not configured yet"),
         };
 
         let keys_val = vec![
             (PATH, current_path),
-            (HCOLOR, current_primary_color),
-            (TCOLOR, current_secondary_color),
+            (PCOLOR, &current_primary_color),
+            (SCOLOR, &current_secondary_color),
+            (HCOLOR, &current_secondary_color),
         ];
 
         for (key, val) in &keys_val {
-            Config::change_preference_if_new(&val, &mut user_preferences, &key);
+            Config::change_preference_if_new(&val.to_string(), &mut current_preferences, &key);
         }
 
         if new_config {
-            match user_preferences.save(&APP_INFO, &KEY) {
-                Ok(_) => println!("Configuration saved inside: {:?}", prefs_base_dir()),
+            match current_preferences.save(&APP_INFO, &KEY) {
+                Ok(_) => println!(
+                    "Configuration saved inside: {:?}",
+                    prefs_base_dir().unwrap()
+                ),
                 Err(_) => return Err("Cannot save your preferences"),
             }
         }
 
         Ok(Config {
-            commands_path: String::from(user_preferences.get(keys_val[0].0).unwrap()),
-            title_color: Config::get_color(user_preferences.get(keys_val[1].0).unwrap()),
-            information_color: Config::get_color(user_preferences.get(keys_val[2].0).unwrap()),
+            commands_path: String::from(current_preferences.get(keys_val[0].0).unwrap()),
+            title_color: Config::get_color(current_preferences.get(keys_val[1].0).unwrap()),
+            information_color: Config::get_color(current_preferences.get(keys_val[2].0).unwrap()),
+            highlight_color: Config::get_color(current_preferences.get(keys_val[3].0).unwrap()),
         })
     }
 

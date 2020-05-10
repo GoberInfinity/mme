@@ -1,7 +1,6 @@
 /* TODO:- Add parameter to print all
 */
 
-use crate::input;
 use crate::settings;
 use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::collections::VecDeque;
@@ -9,7 +8,9 @@ use std::fs;
 use std::path::Path;
 
 pub fn print_with_configuration(
-    user_input: &input::Command,
+    word: &Option<String>,
+    only_by_name: &bool,
+    only_by_desc: &bool,
     config: &settings::Config,
 ) -> Result<(), &'static str> {
     let path = Path::new(&config.commands_path).to_str();
@@ -18,23 +19,19 @@ pub fn print_with_configuration(
         Err(_) => return Err("Cannot read the file"),
     };
 
-    let word = match &user_input.word_to_search {
+    let word = match word {
         Some(word) => word,
         None => return Ok(()),
     };
 
-    let (results, mut results_indexes) = search_using(
-        word,
-        &contents,
-        &user_input.search_only_in_desc,
-        &user_input.search_only_in_name,
-    );
+    let (results, mut results_indexes) = search_using(word, &contents, only_by_desc, only_by_name);
 
     print_search_results(
         results,
         &mut results_indexes,
         config.title_color,
         config.information_color,
+        config.highlight_color,
         word,
     );
 
@@ -146,6 +143,7 @@ fn print_search_results(
     indexes: &mut Vec<VecDeque<usize>>,
     command_color: Colour,
     desc_color: Colour,
+    high_color: Colour,
     word: &str,
 ) {
     for (i, line) in results.iter().enumerate() {
@@ -184,7 +182,7 @@ fn print_search_results(
                     //word
                     last_inn = index + matched.len();
                     let orignal_word = &info[index..last_inn];
-                    let word = command_color.bold().paint(orignal_word);
+                    let word = high_color.bold().paint(orignal_word);
                     result.push(word);
                 }
                 if last_inn < info.len() {
