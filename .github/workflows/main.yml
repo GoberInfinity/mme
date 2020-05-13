@@ -22,7 +22,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          upload_url: curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
+          upload_url: curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
           asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64
           asset_content_type: application/x-msdownload
