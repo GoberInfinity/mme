@@ -1,0 +1,45 @@
+name: Windows-build
+
+on:
+  push:
+    branches: [ by-all ]
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    name: Publish windows binaries
+    runs-on: windows-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@toolchain@v1.0.6
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+      
+    - name: Build
+      run: cargo build --release
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+          
+    - name: Upload binaries to release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          file: target/release/mme.exe
+          asset_name: mme-windows-amd64
+          tag: ${{ github.ref }}
