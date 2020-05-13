@@ -13,18 +13,20 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-      
+
+    - name: Build
+      run: cargo build --release
+
     - name: geturl
       run: |
-        $Env:UGURL = curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq '.upload_url'
-        echo $Env:UGURL
-        
+        $Env:UGURL = curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
+
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          upload_url: curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
+          upload_url: $Env:UGURL
           asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64
           asset_content_type: application/x-msdownload
