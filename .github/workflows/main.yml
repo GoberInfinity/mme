@@ -21,8 +21,8 @@ jobs:
       shell: bash
         
     - name: Check outputs
-      shell: pwsh
-      run: echo ${{ steps.vars.outputs.production }}
+      shell: bash
+      run: echo $downloadUrl
 
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
