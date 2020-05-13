@@ -17,7 +17,7 @@ jobs:
     - name: Get Id
       run: |
         downloadUrl=$(curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq '.upload_url')
-        echo ${{downloadUrl}}
+        echo $downloadUrl
         
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
