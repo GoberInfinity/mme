@@ -1,9 +1,8 @@
 name: Windows-build
 
 on:
-  push:
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -18,23 +17,18 @@ jobs:
     - name: Build
       run: cargo build --release
     
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: windows ${{ github.ref }}
-        draft: false
-        prerelease: false
+    - name: Get Id
+      run: |
+        echo 'Retrieving the id'
+        downloadUrl=$(curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq '.upload_url')  | tr -d '"')
+        echo $downloadUrl
         
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: $downloadUrl
           asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64
           asset_content_type: application/x-msdownload
