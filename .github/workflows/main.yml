@@ -19,10 +19,11 @@ jobs:
 
     - name: geturl
       run: |
-        $Env:UGURL = curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
+        echo ::set-env name=production::curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url'
         
-    - name: testing
-      run: echo $Env:UGURL
+    - name: Check outputs
+      shell: pwsh
+      run: echo ${{ steps.vars.outputs.production }}
 
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
