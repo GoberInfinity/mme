@@ -36,5 +36,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          file: target/release/mme.exe
+          asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64
