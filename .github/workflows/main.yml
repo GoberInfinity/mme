@@ -16,8 +16,9 @@ jobs:
 
     - name: geturl
       run: |
-        $OutputVariable = (curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url')
-        echo ::set-env name=production::$OutputVariable
+        downloadUrl=$(curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url')
+        echo $downloadUrl
+      shell: bash
         
     - name: Check outputs
       shell: pwsh
