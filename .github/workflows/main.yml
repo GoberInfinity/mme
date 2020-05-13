@@ -38,3 +38,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64
+          asset_content_type: application/x-msdownload
