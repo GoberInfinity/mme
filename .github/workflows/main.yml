@@ -28,9 +28,8 @@ jobs:
       uses: actions/upload-release-asset@v1.0.2
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ID_VAL: $fid
       with:
-          upload_url: https://uploads.github.com/repos/GoberInfinity/mme/releases/ID_VAL/assets?name=mme-windows-amd64.exe
+          upload_url: https://uploads.github.com/repos/GoberInfinity/mme/releases/${{fid}}/assets?name=mme-windows-amd64.exe
           asset_path: target/release/mme.exe
           asset_name: mme-windows-amd64.exe
           asset_content_type: application/x-msdownload
