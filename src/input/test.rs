@@ -7,6 +7,8 @@ pub const PRIMARY: &str = "--primary-color";
 pub const INPUT_PRIMARY: &str = "black";
 pub const SECONDARY: &str = "--secondary-color";
 pub const INPUT_SECONDARY: &str = "white";
+pub const HIGHLIGHT: &str = "--highlight-color";
+pub const INPUT_HIGHLIGHT: &str = "blue";
 pub const NAME: &str = "-n";
 pub const DESC: &str = "-d";
 pub const INPUT_WORD: &str = "word";
@@ -23,6 +25,7 @@ fn no_arguments() {
             path: None,
             primary_color: None,
             secondary_color: None,
+            highlight_color: None,
         }
     );
 }
@@ -38,6 +41,8 @@ fn all_arguments() {
             INPUT_PRIMARY,
             SECONDARY,
             INPUT_SECONDARY,
+            HIGHLIGHT,
+            INPUT_HIGHLIGHT,
             NAME,
             DESC,
             INPUT_WORD,
@@ -49,6 +54,7 @@ fn all_arguments() {
             path: Some(INPUT_PATH.to_string()),
             primary_color: Some(INPUT_PRIMARY.to_string()),
             secondary_color: Some(INPUT_SECONDARY.to_string()),
+            highlight_color: Some(INPUT_HIGHLIGHT.to_string()),
         }
     );
 }
@@ -64,6 +70,8 @@ fn all_config() {
             INPUT_PRIMARY,
             SECONDARY,
             INPUT_SECONDARY,
+            HIGHLIGHT,
+            INPUT_HIGHLIGHT,
         ]),
         Command {
             word_to_search: None,
@@ -72,6 +80,7 @@ fn all_config() {
             path: Some(INPUT_PATH.to_string()),
             primary_color: Some(INPUT_PRIMARY.to_string()),
             secondary_color: Some(INPUT_SECONDARY.to_string()),
+            highlight_color: Some(INPUT_HIGHLIGHT.to_string()),
         }
     );
 }
@@ -87,6 +96,7 @@ fn all_search() {
             path: None,
             primary_color: None,
             secondary_color: None,
+            highlight_color: None,
         }
     );
 }
@@ -102,6 +112,7 @@ fn special_search_with_parameters() {
             path: None,
             primary_color: None,
             secondary_color: None,
+            highlight_color: None,
         }
     );
 }

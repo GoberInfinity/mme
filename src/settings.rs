@@ -1,7 +1,4 @@
-/* TODO
-    - Change string to PathBuf
-    - Add method to support RGB colors
-*/
+//TODO: Use self instead normal functions
 
 use ansi_term::Colour;
 use preferences::{prefs_base_dir, AppInfo, Preferences, PreferencesError, PreferencesMap};
@@ -55,7 +52,7 @@ impl Config {
             (PATH, current_path),
             (PCOLOR, &current_primary_color),
             (SCOLOR, &current_secondary_color),
-            (HCOLOR, &current_secondary_color),
+            (HCOLOR, &current_highlight_color),
         ];
 
         for (key, val) in &keys_val {
