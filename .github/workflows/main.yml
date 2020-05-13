@@ -16,7 +16,7 @@ jobs:
 
     - name: Get Id
       run: |
-        downloadUrl=$(curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq '.upload_url')
+        downloadUrl=$(curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq '.id')
         echo $downloadUrl
         
     - name: Upload binaries
