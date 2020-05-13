@@ -16,20 +16,20 @@ jobs:
 
     - name: geturl
       run: |
-        downloadUrl=$(curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url')
-        echo "::set-env name=furl::$downloadUrl"
+        downloadId=$(curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.id')
+        echo "::set-env name=fid::$downloadId"
       shell: bash
         
     - name: Check outputs
       shell: bash
-      run: echo $furl
+      run: echo $fid
 
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          upload_url: $furl
+          upload_url: https://uploads.github.com/repos/GoberInfinity/mme/releases/${{fid}}/assets?name=mme-windows-amd64.exe
           asset_path: target/release/mme.exe
-          asset_name: mme-windows-amd64
+          asset_name: mme-windows-amd64.exe
           asset_content_type: application/x-msdownload
