@@ -16,13 +16,13 @@ jobs:
 
     - name: geturl
       run: |
-        downloadUrl=$(curl https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url')
-        echo $downloadUrl
+        downloadUrl=$(curl -s https://api.github.com/repos/goberinfinity/mme/releases/latest | jq -r '.upload_url')
+        echo "::set-env name=furl::$downloadUrl"
       shell: bash
         
     - name: Check outputs
       shell: bash
-      run: echo $downloadUrl
+      run: echo $furl
 
     - name: Upload binaries
       uses: actions/upload-release-asset@v1.0.2
