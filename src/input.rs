@@ -1,5 +1,6 @@
 use structopt::StructOpt;
-// TODO: Change the name of the long parameters
+// TODO: - Change the name of the long parameters
+// - Add documentation
 
 #[derive(Debug, PartialEq, StructOpt)]
 pub struct Command {
@@ -17,11 +18,14 @@ pub struct Command {
     #[structopt(long)]
     pub path: Option<String>,
 
-    #[structopt(long)]
+    #[structopt(short = "p", long)]
     pub primary_color: Option<String>,
 
-    #[structopt(long)]
+    #[structopt(short = "s", long)]
     pub secondary_color: Option<String>,
+
+    #[structopt(short = "h", long)]
+    pub highlight_color: Option<String>,
 }
 
 #[cfg(test)]
