@@ -142,4 +142,5 @@ impl Config {
 }
 
 #[cfg(test)]
+#[path = "./test.rs"]
 mod test;

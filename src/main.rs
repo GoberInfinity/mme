@@ -1,15 +1,15 @@
 // TODO - Instead of sending user_input only pass the required parameters to the function
 
-mod input;
+mod parser;
 mod search;
-mod settings;
+mod user;
 use std::process;
 use structopt::StructOpt;
 
 fn main() {
-    let user_input = input::Command::from_args();
+    let user_input = parser::input::Command::from_args();
 
-    let config = settings::Config::new(
+    let config = user::preferences::Config::new(
         &user_input.path,
         &user_input.primary_color,
         &user_input.secondary_color,
@@ -20,7 +20,7 @@ fn main() {
         process::exit(1);
     });
 
-    if let Err(e) = search::print_with_configuration(
+    if let Err(e) = search::output::print_with_configuration(
         &user_input.word_to_search,
         &user_input.search_only_in_name,
         &user_input.search_only_in_desc,

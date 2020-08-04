@@ -29,4 +29,5 @@ pub struct Command {
 }
 
 #[cfg(test)]
+#[path = "./test.rs"]
 mod test;

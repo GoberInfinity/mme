@@ -1,7 +1,7 @@
 /* TODO:- Add parameter to print all
 */
 
-use crate::settings;
+use crate::user;
 use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::collections::VecDeque;
 use std::fs;
@@ -11,7 +11,7 @@ pub fn print_with_configuration(
     word: &Option<String>,
     only_by_name: &bool,
     only_by_desc: &bool,
-    config: &settings::Config,
+    config: &user::preferences::Config,
 ) -> Result<(), &'static str> {
     let path = Path::new(&config.commands_path).to_str();
     let contents = match fs::read_to_string(path.unwrap()) {
@@ -203,4 +203,5 @@ fn print_search_results(
 }
 
 #[cfg(test)]
+#[path = "./test.rs"]
 mod test;
