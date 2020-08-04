@@ -11,8 +11,8 @@ fn main() {
 
     let config = user::preferences::Config::new(
         &user_input.path,
-        &user_input.primary_color,
-        &user_input.secondary_color,
+        &user_input.fixed_color,
+        &user_input.text_color,
         &user_input.highlight_color,
     )
     .unwrap_or_else(|err| {

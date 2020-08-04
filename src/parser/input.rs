@@ -1,6 +1,6 @@
 use structopt::StructOpt;
-// TODO: - Change the name of the long parameters
-// - Add documentation
+// TODO:  Add documentation
+// Add unit  testing
 
 #[derive(Debug, PartialEq, StructOpt)]
 pub struct Command {
@@ -15,14 +15,14 @@ pub struct Command {
     #[structopt(short = "d", long = "desc")]
     pub search_only_in_desc: bool,
 
-    #[structopt(long)]
+    #[structopt(short = "p", long)]
     pub path: Option<String>,
 
-    #[structopt(short = "p", long)]
-    pub primary_color: Option<String>,
+    #[structopt(short = "f", long)]
+    pub fixed_color: Option<String>,
 
-    #[structopt(short = "s", long)]
-    pub secondary_color: Option<String>,
+    #[structopt(short = "t", long)]
+    pub text_color: Option<String>,
 
     #[structopt(short = "h", long)]
     pub highlight_color: Option<String>,
