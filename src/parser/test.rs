@@ -3,10 +3,10 @@ use super::*;
 pub const BINARY: &str = "mme";
 pub const PATH: &str = "--path";
 pub const INPUT_PATH: &str = "../examples/c";
-pub const PRIMARY: &str = "--fixed-color";
-pub const INPUT_PRIMARY: &str = "black";
-pub const SECONDARY: &str = "--text-color";
-pub const INPUT_SECONDARY: &str = "white";
+pub const FIXED: &str = "--fixed-color";
+pub const INPUT_FIXED: &str = "black";
+pub const TEXT: &str = "--text-color";
+pub const INPUT_TEXT: &str = "white";
 pub const HIGHLIGHT: &str = "--highlight-color";
 pub const INPUT_HIGHLIGHT: &str = "blue";
 pub const NAME: &str = "-n";
@@ -37,10 +37,10 @@ fn all_arguments() {
             BINARY,
             PATH,
             INPUT_PATH,
-            PRIMARY,
-            INPUT_PRIMARY,
-            SECONDARY,
-            INPUT_SECONDARY,
+            FIXED,
+            INPUT_FIXED,
+            TEXT,
+            INPUT_TEXT,
             HIGHLIGHT,
             INPUT_HIGHLIGHT,
             NAME,
@@ -52,8 +52,8 @@ fn all_arguments() {
             search_only_in_name: true,
             search_only_in_desc: true,
             path: Some(INPUT_PATH.to_string()),
-            fixed_color: Some(INPUT_PRIMARY.to_string()),
-            text_color: Some(INPUT_SECONDARY.to_string()),
+            fixed_color: Some(INPUT_FIXED.to_string()),
+            text_color: Some(INPUT_TEXT.to_string()),
             highlight_color: Some(INPUT_HIGHLIGHT.to_string()),
         }
     );
@@ -66,10 +66,10 @@ fn all_config() {
             BINARY,
             PATH,
             INPUT_PATH,
-            PRIMARY,
-            INPUT_PRIMARY,
-            SECONDARY,
-            INPUT_SECONDARY,
+            FIXED,
+            INPUT_FIXED,
+            TEXT,
+            INPUT_TEXT,
             HIGHLIGHT,
             INPUT_HIGHLIGHT,
         ]),
@@ -78,8 +78,8 @@ fn all_config() {
             search_only_in_name: false,
             search_only_in_desc: false,
             path: Some(INPUT_PATH.to_string()),
-            fixed_color: Some(INPUT_PRIMARY.to_string()),
-            text_color: Some(INPUT_SECONDARY.to_string()),
+            fixed_color: Some(INPUT_FIXED.to_string()),
+            text_color: Some(INPUT_TEXT.to_string()),
             highlight_color: Some(INPUT_HIGHLIGHT.to_string()),
         }
     );
