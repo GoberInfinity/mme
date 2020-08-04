@@ -24,18 +24,18 @@ pub struct Config {
 impl Config {
     pub fn new(
         path: &Option<String>,
-        primary_color: &Option<String>,
-        secondary_color: &Option<String>,
+        fixed_color: &Option<String>,
+        text_color: &Option<String>,
         highlight_color: &Option<String>,
     ) -> Result<Config, &'static str> {
         let current_path = path.as_deref().unwrap_or("");
-        let current_primary_color = primary_color.as_deref().unwrap_or("");
-        let current_secondary_color = secondary_color.as_deref().unwrap_or("");
+        let current_fixed_color = fixed_color.as_deref().unwrap_or("");
+        let current_text_color = text_color.as_deref().unwrap_or("");
         let current_highlight_color = highlight_color.as_deref().unwrap_or("");
 
         let new_config = !current_path.is_empty()
-            || !current_primary_color.is_empty()
-            || !current_secondary_color.is_empty()
+            || !current_fixed_color.is_empty()
+            || !current_text_color.is_empty()
             || !current_highlight_color.is_empty();
 
         let mut current_preferences = match Config::get_preferences(
@@ -48,8 +48,8 @@ impl Config {
 
         let keys_val = vec![
             (PATH, current_path),
-            (TEXT_COLOR, &current_primary_color),
-            (FIXED_COLOR, &current_secondary_color),
+            (FIXED_COLOR, &current_fixed_color),
+            (TEXT_COLOR, &current_text_color),
             (HIGH_COLOR, &current_highlight_color),
         ];
 
