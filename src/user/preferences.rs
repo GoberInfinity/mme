@@ -1,14 +1,12 @@
-//TODO: Use self instead normal functions
-
 use ansi_term::Colour;
 use preferences::{prefs_base_dir, AppInfo, Preferences, PreferencesError, PreferencesMap};
 use std::collections::HashMap;
 
 const KEY: &str = "mme";
 const PATH: &str = "commands_path";
-const PCOLOR: &str = "text_color";
-const SCOLOR: &str = "head_color";
-const HCOLOR: &str = "highlight_color";
+const FIXED_COLOR: &str = "fixed_color";
+const TEXT_COLOR: &str = "text_color";
+const HIGH_COLOR: &str = "highlight_color";
 
 const APP_INFO: AppInfo = AppInfo {
     name: "preferences",
@@ -18,8 +16,8 @@ const APP_INFO: AppInfo = AppInfo {
 #[derive(Debug, PartialEq)]
 pub struct Config {
     pub commands_path: String,
-    pub title_color: ansi_term::Colour,
-    pub information_color: ansi_term::Colour,
+    pub fixed_color: ansi_term::Colour,
+    pub text_color: ansi_term::Colour,
     pub highlight_color: ansi_term::Colour,
 }
 
@@ -50,9 +48,9 @@ impl Config {
 
         let keys_val = vec![
             (PATH, current_path),
-            (PCOLOR, &current_primary_color),
-            (SCOLOR, &current_secondary_color),
-            (HCOLOR, &current_highlight_color),
+            (TEXT_COLOR, &current_primary_color),
+            (FIXED_COLOR, &current_secondary_color),
+            (HIGH_COLOR, &current_highlight_color),
         ];
 
         for (key, val) in &keys_val {
@@ -71,8 +69,8 @@ impl Config {
 
         Ok(Config {
             commands_path: String::from(current_preferences.get(keys_val[0].0).unwrap()),
-            title_color: Config::get_color(current_preferences.get(keys_val[1].0).unwrap()),
-            information_color: Config::get_color(current_preferences.get(keys_val[2].0).unwrap()),
+            fixed_color: Config::get_color(current_preferences.get(keys_val[1].0).unwrap()),
+            text_color: Config::get_color(current_preferences.get(keys_val[2].0).unwrap()),
             highlight_color: Config::get_color(current_preferences.get(keys_val[3].0).unwrap()),
         })
     }

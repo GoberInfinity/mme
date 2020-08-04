@@ -29,8 +29,8 @@ pub fn print_with_configuration(
     print_search_results(
         results,
         &mut results_indexes,
-        config.title_color,
-        config.information_color,
+        config.fixed_color,
+        config.text_color,
         config.highlight_color,
         word,
     );

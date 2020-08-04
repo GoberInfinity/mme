@@ -1,6 +1,4 @@
 use structopt::StructOpt;
-// TODO:  Add documentation
-// Add unit  testing
 
 #[derive(Debug, PartialEq, StructOpt)]
 pub struct Command {
