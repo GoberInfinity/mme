@@ -1,5 +1,5 @@
 /* TODO:- Add parameter to print all
-- Add comments to the file
+- Self fn instead of regular functions?
 */
 
 use crate::user;
@@ -7,6 +7,12 @@ use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
+
+const NAME: &str = "NAME";
+const DESC: &str = "DESC";
+const NAME_SYMBOL: char = '#';
+const DESC_SYMBOL: char = '>';
+const COMMENT_SYMBOL: char = '/';
 
 pub fn print_with_configuration(
     word: &Option<String>,
@@ -51,8 +57,6 @@ fn search_using<'a>(
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
     let mut last_type = '#';
-    let mut search = true;
-
     let mut all_found_in_element = Vec::new();
     let mut found_in_element: VecDeque<usize> = VecDeque::new();
 
@@ -63,44 +67,39 @@ fn search_using<'a>(
 
     for (number_line, line) in contents.lines().enumerate() {
         let end_of_file = number_line == size_doc - 1;
+        let mut search = true;
         let mut empty_line = false;
         let mut chars = line.trim().chars();
 
         match chars.next() {
             Some(first_char) => match first_char {
-                '/' => continue,
-                '#' => {
-                    //Divide one string slice into two at an index.
-                    let (_, info) = line.split_at('#'.len_utf8());
-                    n_b.push_back(("NAME", info));
+                // Validate that the comment only occur in a stand alone line
+                COMMENT_SYMBOL => continue,
+                NAME_SYMBOL => {
+                    split_and_put_in_buffer(line, NAME, NAME_SYMBOL, &mut n_b);
                     last_type = '#';
                     if *by_desc && !by_all {
                         search = false;
                     }
                 }
-                '>' => {
-                    let (_, info) = line.split_at('>'.len_utf8());
-                    n_b.push_back(("DESC", info));
+                DESC_SYMBOL => {
+                    split_and_put_in_buffer(line, DESC, DESC_SYMBOL, &mut n_b);
                     last_type = '>';
                     //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
-                    if *by_head && !by_all && end_of_file {
-                        search = false;
-                    } else if *by_head && !by_all {
+                    if (*by_head && !by_all && end_of_file) || (*by_head && !by_all) {
                         search = false;
                     }
                 }
                 _ => match last_type {
-                    '#' => {
+                    NAME_SYMBOL => {
                         n_b.push_back(("   ", line));
                         if *by_desc && !by_all {
                             search = false;
                         }
                     }
-                    '>' => {
+                    DESC_SYMBOL => {
                         n_b.push_back(("   ", line));
-                        if *by_head && !by_all && end_of_file {
-                            search = false;
-                        } else if *by_head && !by_all {
+                        if (*by_head && !by_all && end_of_file) || (*by_head && !by_all) {
                             search = false;
                         }
                     }
@@ -136,11 +135,18 @@ fn search_using<'a>(
             n_b.clear();
             found_in_element.clear();
         }
-
-        search = true;
     }
 
     (all, all_found_in_element)
+}
+
+fn split_and_put_in_buffer<'a>(
+    line: &'a str,
+    fixed_text: &'a str,
+    symbol_to_split: char,
+    buffer: &mut VecDeque<(&'a str, &'a str)>,
+) {
+    buffer.push_back((fixed_text, line.split_at(symbol_to_split.len_utf8()).1));
 }
 
 fn print_search_results(
