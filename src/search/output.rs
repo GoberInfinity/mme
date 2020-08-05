@@ -61,54 +61,58 @@ fn search_using<'a>(
         (_, _) => false,
     };
 
-    for (i, line) in contents.lines().enumerate() {
-        let empty_line = line.trim().is_empty();
-        let end_of_file = i == size_doc - 1;
+    for (number_line, line) in contents.lines().enumerate() {
+        let end_of_file = number_line == size_doc - 1;
+        let mut empty_line = false;
+        let mut chars = line.trim().chars();
 
-        if !empty_line {
-            match line.chars().next() {
-                Some(first_char) => match first_char {
+        match chars.next() {
+            Some(first_char) => match first_char {
+                '/' => continue,
+                '#' => {
+                    //Divide one string slice into two at an index.
+                    let (_, info) = line.split_at('#'.len_utf8());
+                    n_b.push_back(("NAME", info));
+                    last_type = '#';
+                    if *by_desc && !by_all {
+                        search = false;
+                    }
+                }
+                '>' => {
+                    let (_, info) = line.split_at('>'.len_utf8());
+                    n_b.push_back(("DESC", info));
+                    last_type = '>';
+                    //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
+                    if *by_head && !by_all && end_of_file {
+                        search = false;
+                    } else if *by_head && !by_all {
+                        search = false;
+                    }
+                }
+                _ => match last_type {
                     '#' => {
-                        //Divide one string slice into two at an index.
-                        let (_, info) = line.split_at('#'.len_utf8());
-                        n_b.push_back(("NAME", info));
-                        last_type = '#';
+                        n_b.push_back(("   ", line));
                         if *by_desc && !by_all {
                             search = false;
                         }
                     }
                     '>' => {
-                        let (_, info) = line.split_at('>'.len_utf8());
-                        n_b.push_back(("DESC", info));
-                        last_type = '>';
-                        //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
+                        n_b.push_back(("   ", line));
                         if *by_head && !by_all && end_of_file {
                             search = false;
                         } else if *by_head && !by_all {
                             search = false;
                         }
                     }
-                    _ => match last_type {
-                        '#' => {
-                            n_b.push_back(("   ", line));
-                            if *by_desc && !by_all {
-                                search = false;
-                            }
-                        }
-                        '>' => {
-                            n_b.push_back(("   ", line));
-                            if *by_head && !by_all && end_of_file {
-                                search = false;
-                            } else if *by_head && !by_all {
-                                search = false;
-                            }
-                        }
-                        _ => (),
-                    },
+                    _ => (),
                 },
-                None => (),
+            },
+            None => {
+                empty_line = true;
             }
+        }
 
+        if !empty_line {
             if search {
                 match n_b.back() {
                     Some(line) => {
