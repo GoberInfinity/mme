@@ -4,7 +4,6 @@
 
 use crate::user;
 use ansi_term::{ANSIString, ANSIStrings, Colour};
-use std::collections::VecDeque;
 use std::fs;
 use std::path::Path;
 
@@ -114,7 +113,6 @@ fn search_using<'a>(
                 all_found_in_element.push(found_in_element.clone());
                 found = false;
             }
-            last_type = '#';
             n_b.clear();
             found_in_element.clear();
         }
