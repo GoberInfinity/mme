@@ -52,15 +52,15 @@ fn search_using<'a>(
     contents: &'a str,
     by_desc: &bool,
     by_head: &bool,
-) -> (Vec<VecDeque<(&'a str, &'a str)>>, Vec<VecDeque<usize>>) {
+) -> (Vec<Vec<(&'a str, &'a str)>>, Vec<Vec<usize>>) {
     let query = query.to_lowercase();
     let mut found = false;
-    let mut n_b: VecDeque<(&str, &str)> = VecDeque::new();
+    let mut n_b: Vec<(&str, &str)> = Vec::new();
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
     let mut last_type = '#';
     let mut all_found_in_element = Vec::new();
-    let mut found_in_element: VecDeque<usize> = VecDeque::new();
+    let mut found_in_element: Vec<usize> = Vec::new();
 
     let by_all = match (by_head, by_desc) {
         (true, true) => true,
@@ -107,11 +107,11 @@ fn search_using<'a>(
 
         if !empty_line {
             if search {
-                match n_b.back() {
+                match n_b.last() {
                     Some(line) => {
                         if line.1.to_lowercase().contains(&query) {
                             found = true;
-                            found_in_element.push_back(n_b.len() - 1);
+                            found_in_element.push(n_b.len() - 1);
                         }
                     }
                     _ => (),
@@ -138,14 +138,14 @@ fn split_and_put_in_buffer<'a>(
     line: &'a str,
     fixed_text: &'a str,
     symbol_to_split: char,
-    buffer: &mut VecDeque<(&'a str, &'a str)>,
+    buffer: &mut Vec<(&'a str, &'a str)>,
 ) {
     let information = match symbol_to_split {
         NAME_SYMBOL | DESC_SYMBOL => line.split_at(symbol_to_split.len_utf8()).1,
         _ => line,
     };
 
-    buffer.push_back((fixed_text, information));
+    buffer.push((fixed_text, information));
 }
 
 fn is_necessary_search_by_name(by_desc: &bool, by_all: &bool) -> bool {
@@ -157,8 +157,8 @@ fn is_necessary_search_by_desc(by_head: &bool, by_all: &bool, end_of_file: &bool
 }
 
 fn print_search_results(
-    results: Vec<VecDeque<(&str, &str)>>,
-    indexes: &mut Vec<VecDeque<usize>>,
+    results: Vec<Vec<(&str, &str)>>,
+    indexes: &mut Vec<Vec<usize>>,
     command_color: Colour,
     desc_color: Colour,
     high_color: Colour,

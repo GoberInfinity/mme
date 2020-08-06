@@ -57,7 +57,7 @@ const D_RESULT_ML_3: (&str, &str) = ("   ", "connection");
 
 #[test]
 fn command_by_all_word_in_name_file_with_one_command() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_LS, D_RESULT_LS].into_iter().collect()],
         vec![vec![0].into_iter().collect()],
     );
@@ -69,7 +69,7 @@ fn command_by_all_word_in_name_file_with_one_command() {
 
 #[test]
 fn command_by_all_word_in_desc_file_with_one_command() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_LS, D_RESULT_LS].into_iter().collect()],
         vec![vec![1].into_iter().collect()],
     );
@@ -81,7 +81,7 @@ fn command_by_all_word_in_desc_file_with_one_command() {
 
 #[test]
 fn utf8_command_by_all_word_in_name_file_with_one_command() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_LS, D_RESULT_UTF8_LS].into_iter().collect()],
         vec![vec![0].into_iter().collect()],
     );
@@ -93,7 +93,7 @@ fn utf8_command_by_all_word_in_name_file_with_one_command() {
 
 #[test]
 fn utf8_command_by_all_word_in_desc_file_with_one_command() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_LS, D_RESULT_UTF8_LS].into_iter().collect()],
         vec![vec![1].into_iter().collect()],
     );
@@ -105,7 +105,7 @@ fn utf8_command_by_all_word_in_desc_file_with_one_command() {
 
 #[test]
 fn command_by_name_word_in_name_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_RM, D_RESULT_RM].into_iter().collect()],
         vec![vec![0].into_iter().collect()],
     );
@@ -117,7 +117,7 @@ fn command_by_name_word_in_name_file() {
 
 #[test]
 fn command_by_name_word_in_desc_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_RM, D_RESULT_RM].into_iter().collect()],
         vec![vec![1].into_iter().collect()],
     );
@@ -129,7 +129,7 @@ fn command_by_name_word_in_desc_file() {
 
 #[test]
 fn command_by_name_and_desc_word_in_name_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![
             vec![N_RESULT_RUST, D_RESULT_RUST, RESULT_RUST_1, RESULT_RUST_2]
                 .into_iter()
@@ -145,7 +145,7 @@ fn command_by_name_and_desc_word_in_name_file() {
 
 #[test]
 fn special_command_by_name_word_in_desc_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_LS, D_RESULT_LS].into_iter().collect()],
         vec![vec![0].into_iter().collect()],
     );
@@ -157,7 +157,7 @@ fn special_command_by_name_word_in_desc_file() {
 
 #[test]
 fn special_command_by_desc_word_in_desc_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![N_RESULT_RM, D_RESULT_RM].into_iter().collect()],
         vec![vec![1].into_iter().collect()],
     );
@@ -169,7 +169,7 @@ fn special_command_by_desc_word_in_desc_file() {
 
 #[test]
 fn command_by_name_word_nowhere_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (vec![], vec![]);
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (vec![], vec![]);
     assert_eq!(
         search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &false, &true),
         expected_result
@@ -178,7 +178,7 @@ fn command_by_name_word_nowhere_file() {
 
 #[test]
 fn command_by_desc_word_nowhere_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (vec![], vec![]);
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (vec![], vec![]);
     assert_eq!(
         search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &true, &false),
         expected_result
@@ -187,7 +187,7 @@ fn command_by_desc_word_nowhere_file() {
 
 #[test]
 fn command_by_all_word_in_multiple_desc_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![
             N_RESULT_ML_1,
             N_RESULT_ML_2,
@@ -208,7 +208,7 @@ fn command_by_all_word_in_multiple_desc_file() {
 
 #[test]
 fn command_by_name_word_in_multiple_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![
             N_RESULT_ML_1,
             N_RESULT_ML_2,
@@ -229,7 +229,7 @@ fn command_by_name_word_in_multiple_file() {
 
 #[test]
 fn command_by_desc_word_in_multiple_file() {
-    let expected_result: (Vec<VecDeque<(&str, &str)>>, Vec<VecDeque<usize>>) = (
+    let expected_result: (Vec<Vec<(&str, &str)>>, Vec<Vec<usize>>) = (
         vec![vec![
             N_RESULT_ML_1,
             N_RESULT_ML_2,
