@@ -69,7 +69,6 @@ fn search_using<'a>(
 
     for (number_line, line) in contents.lines().enumerate() {
         let end_of_file = number_line == size_doc - 1;
-        let mut search = true;
         let mut empty_line = false;
         let mut chars = line.trim().chars();
 
@@ -80,25 +79,12 @@ fn search_using<'a>(
                 NAME_SYMBOL => {
                     split_and_put_in_buffer(line, NAME, NAME_SYMBOL, &mut n_b);
                     last_type = NAME_SYMBOL;
-                    search = is_necessary_search_by_name(by_desc, &by_all);
                 }
                 DESC_SYMBOL => {
                     split_and_put_in_buffer(line, DESC, DESC_SYMBOL, &mut n_b);
                     last_type = DESC_SYMBOL;
-                    //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
-                    search = is_necessary_search_by_desc(by_head, &by_all, &end_of_file);
                 }
-                _ => match last_type {
-                    NAME_SYMBOL => {
-                        split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b);
-                        search = is_necessary_search_by_name(by_desc, &by_all);
-                    }
-                    DESC_SYMBOL => {
-                        split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b);
-                        search = is_necessary_search_by_desc(by_head, &by_all, &end_of_file);
-                    }
-                    _ => (),
-                },
+                _ => split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b),
             },
             None => {
                 empty_line = true;
@@ -106,7 +92,10 @@ fn search_using<'a>(
         }
 
         if !empty_line {
-            if search {
+            if match last_type {
+                NAME_SYMBOL => is_necessary_search_by_name(by_desc, &by_all),
+                _ => is_necessary_search_by_desc(by_head, &by_all, &end_of_file),
+            } {
                 match n_b.last() {
                     Some(line) => {
                         if line.1.to_lowercase().contains(&query) {
@@ -116,7 +105,7 @@ fn search_using<'a>(
                     }
                     _ => (),
                 }
-            }
+            };
         }
 
         if empty_line || end_of_file {
@@ -153,6 +142,7 @@ fn is_necessary_search_by_name(by_desc: &bool, by_all: &bool) -> bool {
 }
 
 fn is_necessary_search_by_desc(by_head: &bool, by_all: &bool, end_of_file: &bool) -> bool {
+    //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
     !((*by_head && !by_all && *end_of_file) || (*by_head && !by_all))
 }
 
