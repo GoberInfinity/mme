@@ -7,6 +7,10 @@ use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::fs;
 use std::path::Path;
 
+const NAME_REP: u8 = 0;
+const DESC_REP: u8 = 1;
+const SEPARATOR_REP: u8 = 2;
+
 const NAME: &str = "NAME";
 const DESC: &str = "DESC";
 const SEPARATOR: &str = "   ";
@@ -32,16 +36,16 @@ pub fn print_with_configuration(
         None => return Ok(()),
     };
 
-    let (results, mut results_indexes) = search_using(word, &contents, only_by_desc, only_by_name);
+    let results = search_using(word, &contents, only_by_desc, only_by_name);
 
-    print_search_results(
+    /*print_search_results(
         results,
         &mut results_indexes,
         config.fixed_color,
         config.text_color,
         config.highlight_color,
         word,
-    );
+    );*/
 
     Ok(())
 }
@@ -51,14 +55,14 @@ fn search_using<'a>(
     contents: &'a str,
     by_desc: &bool,
     by_head: &bool,
-) -> (Vec<Vec<(&'a str, &'a str)>>, Vec<Vec<usize>>) {
+) -> Vec<Vec<(u8, bool, &'a str)>> {
     let query = query.to_lowercase();
     let mut found = false;
-    let mut n_b: Vec<(&str, &str)> = Vec::new();
+    let mut n_b: Vec<(u8, bool, &str)> = Vec::new();
     let mut all = Vec::new();
     let size_doc = contents.lines().count();
-    let mut last_type = '#';
-    let mut all_found_in_element = Vec::new();
+    let mut last_type = NAME_SYMBOL;
+    //let mut all_found_in_element = Vec::new();
     let mut found_in_element: Vec<usize> = Vec::new();
 
     let by_all = match (by_head, by_desc) {
@@ -76,14 +80,14 @@ fn search_using<'a>(
                 // Validate that the comment only occur in a stand alone line
                 COMMENT_SYMBOL => continue,
                 NAME_SYMBOL => {
-                    split_and_put_in_buffer(line, NAME, NAME_SYMBOL, &mut n_b);
+                    split_and_put_in_buffer(line, NAME_REP, NAME_SYMBOL, &mut n_b);
                     last_type = NAME_SYMBOL;
                 }
                 DESC_SYMBOL => {
-                    split_and_put_in_buffer(line, DESC, DESC_SYMBOL, &mut n_b);
+                    split_and_put_in_buffer(line, DESC_REP, DESC_SYMBOL, &mut n_b);
                     last_type = DESC_SYMBOL;
                 }
-                _ => split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b),
+                _ => split_and_put_in_buffer(line, SEPARATOR_REP, SEPARATOR_SYMBOL, &mut n_b),
             },
             None => {
                 empty_line = true;
@@ -97,9 +101,12 @@ fn search_using<'a>(
             } {
                 match n_b.last() {
                     Some(line) => {
-                        if line.1.to_lowercase().contains(&query) {
+                        if line.2.to_lowercase().contains(&query) {
+                            if let Some(last) = n_b.last_mut() {
+                                last.1 = true;
+                            }
                             found = true;
-                            found_in_element.push(n_b.len() - 1);
+                            //found_in_element.push(n_b.len() - 1);
                         }
                     }
                     _ => (),
@@ -110,29 +117,30 @@ fn search_using<'a>(
         if empty_line || end_of_file {
             if found {
                 all.push(n_b.clone());
-                all_found_in_element.push(found_in_element.clone());
+                //all_found_in_element.push(found_in_element.clone());
                 found = false;
             }
             n_b.clear();
-            found_in_element.clear();
+            //found_in_element.clear();
         }
     }
 
-    (all, all_found_in_element)
+    all
+    //(all, all_found_in_element)
 }
 
 fn split_and_put_in_buffer<'a>(
     line: &'a str,
-    fixed_text: &'a str,
+    type_symbol: u8,
     symbol_to_split: char,
-    buffer: &mut Vec<(&'a str, &'a str)>,
+    buffer: &mut Vec<(u8, bool, &'a str)>,
 ) {
     let information = match symbol_to_split {
         NAME_SYMBOL | DESC_SYMBOL => line.split_at(symbol_to_split.len_utf8()).1,
         _ => line,
     };
 
-    buffer.push((fixed_text, information));
+    buffer.push((type_symbol, false, information));
 }
 
 fn is_necessary_search_by_name(by_desc: &bool, by_all: &bool) -> bool {
