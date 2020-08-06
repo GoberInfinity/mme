@@ -10,9 +10,11 @@ use std::path::Path;
 
 const NAME: &str = "NAME";
 const DESC: &str = "DESC";
+const SEPARATOR: &str = "   ";
 const NAME_SYMBOL: char = '#';
 const DESC_SYMBOL: char = '>';
 const COMMENT_SYMBOL: char = '/';
+const SEPARATOR_SYMBOL: char = '\0';
 
 pub fn print_with_configuration(
     word: &Option<String>,
@@ -77,31 +79,23 @@ fn search_using<'a>(
                 COMMENT_SYMBOL => continue,
                 NAME_SYMBOL => {
                     split_and_put_in_buffer(line, NAME, NAME_SYMBOL, &mut n_b);
-                    last_type = '#';
-                    if *by_desc && !by_all {
-                        search = false;
-                    }
+                    last_type = NAME_SYMBOL;
+                    search = is_necessary_search_by_name(by_desc, &by_all);
                 }
                 DESC_SYMBOL => {
                     split_and_put_in_buffer(line, DESC, DESC_SYMBOL, &mut n_b);
-                    last_type = '>';
+                    last_type = DESC_SYMBOL;
                     //end_of_file prevents to skip the last part of the code if the iterator reach the end of the file
-                    if (*by_head && !by_all && end_of_file) || (*by_head && !by_all) {
-                        search = false;
-                    }
+                    search = is_necessary_search_by_desc(by_head, &by_all, &end_of_file);
                 }
                 _ => match last_type {
                     NAME_SYMBOL => {
-                        n_b.push_back(("   ", line));
-                        if *by_desc && !by_all {
-                            search = false;
-                        }
+                        split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b);
+                        search = is_necessary_search_by_name(by_desc, &by_all);
                     }
                     DESC_SYMBOL => {
-                        n_b.push_back(("   ", line));
-                        if (*by_head && !by_all && end_of_file) || (*by_head && !by_all) {
-                            search = false;
-                        }
+                        split_and_put_in_buffer(line, SEPARATOR, SEPARATOR_SYMBOL, &mut n_b);
+                        search = is_necessary_search_by_desc(by_head, &by_all, &end_of_file);
                     }
                     _ => (),
                 },
@@ -146,7 +140,20 @@ fn split_and_put_in_buffer<'a>(
     symbol_to_split: char,
     buffer: &mut VecDeque<(&'a str, &'a str)>,
 ) {
-    buffer.push_back((fixed_text, line.split_at(symbol_to_split.len_utf8()).1));
+    let information = match symbol_to_split {
+        NAME_SYMBOL | DESC_SYMBOL => line.split_at(symbol_to_split.len_utf8()).1,
+        _ => line,
+    };
+
+    buffer.push_back((fixed_text, information));
+}
+
+fn is_necessary_search_by_name(by_desc: &bool, by_all: &bool) -> bool {
+    !(*by_desc && !*by_all)
+}
+
+fn is_necessary_search_by_desc(by_head: &bool, by_all: &bool, end_of_file: &bool) -> bool {
+    !((*by_head && !by_all && *end_of_file) || (*by_head && !by_all))
 }
 
 fn print_search_results(
