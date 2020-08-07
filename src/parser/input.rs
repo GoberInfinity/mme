@@ -13,6 +13,10 @@ pub struct Command {
     #[structopt(short = "d", long = "desc")]
     pub search_only_in_desc: bool,
 
+    /// Prints all the commands and their descriptions
+    #[structopt(short = "a", long = "all")]
+    pub print_all: bool,
+
     /// Sets the path of the file where mme is going to search
     #[structopt(short = "p", long)]
     pub path: Option<String>,

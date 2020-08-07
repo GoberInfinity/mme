@@ -1,5 +1,7 @@
 use super::*;
 
+// TODO: -Create the unit testing for print all
+
 pub const BINARY: &str = "mme";
 pub const PATH: &str = "--path";
 pub const INPUT_PATH: &str = "../examples/c";
@@ -20,6 +22,7 @@ fn no_arguments() {
         Command::from_args(),
         Command {
             word_to_search: None,
+            print_all: false,
             search_only_in_name: false,
             search_only_in_desc: false,
             path: None,
@@ -49,6 +52,7 @@ fn all_arguments() {
         ]),
         Command {
             word_to_search: Some(INPUT_WORD.to_string()),
+            print_all: false,
             search_only_in_name: true,
             search_only_in_desc: true,
             path: Some(INPUT_PATH.to_string()),
@@ -75,6 +79,7 @@ fn all_config() {
         ]),
         Command {
             word_to_search: None,
+            print_all: false,
             search_only_in_name: false,
             search_only_in_desc: false,
             path: Some(INPUT_PATH.to_string()),
@@ -91,6 +96,7 @@ fn all_search() {
         Command::from_iter(&[BINARY, NAME, DESC, INPUT_WORD]),
         Command {
             word_to_search: Some(INPUT_WORD.to_string()),
+            print_all: false,
             search_only_in_name: true,
             search_only_in_desc: true,
             path: None,
@@ -107,6 +113,7 @@ fn special_search_with_parameters() {
         Command::from_iter(&[BINARY, NAME, "--", INPUT_SPECIAL_WORD]),
         Command {
             word_to_search: Some(INPUT_SPECIAL_WORD.to_string()),
+            print_all: false,
             search_only_in_name: true,
             search_only_in_desc: false,
             path: None,

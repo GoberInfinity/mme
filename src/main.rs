@@ -20,6 +20,7 @@ fn main() {
 
     if let Err(e) = search::output::print_with_configuration(
         &user_input.word_to_search,
+        &user_input.print_all,
         &user_input.search_only_in_name,
         &user_input.search_only_in_desc,
         &config,

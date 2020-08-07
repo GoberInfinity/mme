@@ -1,5 +1,7 @@
 use super::*;
 
+// TODO: Add unit testing to print all
+
 const SINGLE_FILE_COMMAND: &str = "#ls -la -- # > *
 >Lists directory > # *
 ";
@@ -45,7 +47,7 @@ const D_RESULT_RM_2: &str = "Deletes all --";
 const RUST_COMMAND: &str = "rustup";
 
 const N_RESULT_RUST_2: &str = "rustup default <version>";
-const D_RESULT_RUST_2: &str = " It uses";
+const D_RESULT_RUST_2: &str = "It uses";
 const RESULT_RUST_1_2: &str = "the rust version";
 const RESULT_RUST_2_2: &str = "specified";
 
@@ -66,7 +68,7 @@ fn command_by_all_word_in_name_file_with_one_command() {
             .into_iter()
             .collect()];
     assert_eq!(
-        search_using(LS_COMMAND, SINGLE_FILE_COMMAND, &false, &false),
+        search_using(LS_COMMAND, SINGLE_FILE_COMMAND, &false, &false, &false),
         expected_result
     );
 }
@@ -79,7 +81,7 @@ fn command_by_all_word_in_desc_file_with_one_command() {
             .collect()];
 
     assert_eq!(
-        search_using(LS_DESC, SINGLE_FILE_COMMAND, &false, &false),
+        search_using(LS_DESC, SINGLE_FILE_COMMAND, &false, &false, &false),
         expected_result
     );
 }
@@ -94,7 +96,7 @@ fn utf8_command_by_all_word_in_name_file_with_one_command() {
     .collect()];
 
     assert_eq!(
-        search_using(LS_COMMAND, SINGLE_FILE_COMMAND_UTF8, &false, &false),
+        search_using(LS_COMMAND, SINGLE_FILE_COMMAND_UTF8, &false, &false, &false),
         expected_result
     );
 }
@@ -109,7 +111,13 @@ fn utf8_command_by_all_word_in_desc_file_with_one_command() {
     .collect()];
 
     assert_eq!(
-        search_using(LS_DESC_UTF8, SINGLE_FILE_COMMAND_UTF8, &false, &false),
+        search_using(
+            LS_DESC_UTF8,
+            SINGLE_FILE_COMMAND_UTF8,
+            &false,
+            &false,
+            &false
+        ),
         expected_result
     );
 }
@@ -122,7 +130,7 @@ fn command_by_name_word_in_name_file() {
             .collect()];
 
     assert_eq!(
-        search_using(RM_COMMAND, FILE_COMMAND, &false, &true),
+        search_using(RM_COMMAND, FILE_COMMAND, &false, &false, &true),
         expected_result
     );
 }
@@ -135,7 +143,7 @@ fn command_by_name_word_in_desc_file() {
             .collect()];
 
     assert_eq!(
-        search_using(RM_DESC, FILE_COMMAND, &true, &false),
+        search_using(RM_DESC, FILE_COMMAND, &false, &true, &false),
         expected_result
     );
 }
@@ -152,7 +160,7 @@ fn command_by_name_and_desc_word_in_name_file() {
     .collect()];
 
     assert_eq!(
-        search_using(RUST_COMMAND, FILE_COMMAND, &true, &true),
+        search_using(RUST_COMMAND, FILE_COMMAND, &false, &true, &true),
         expected_result
     );
 }
@@ -165,7 +173,7 @@ fn special_command_by_name_word_in_desc_file() {
             .collect()];
 
     assert_eq!(
-        search_using(SPECIAL_COMMAND, FILE_COMMAND, &false, &true),
+        search_using(SPECIAL_COMMAND, FILE_COMMAND, &false, &false, &true),
         expected_result
     );
 }
@@ -178,7 +186,7 @@ fn special_command_by_desc_word_in_desc_file() {
             .collect()];
 
     assert_eq!(
-        search_using(SPECIAL_COMMAND, FILE_COMMAND, &true, &false),
+        search_using(SPECIAL_COMMAND, FILE_COMMAND, &false, &true, &false),
         expected_result
     );
 }
@@ -187,7 +195,7 @@ fn special_command_by_desc_word_in_desc_file() {
 fn command_by_name_word_nowhere_file() {
     let expected_result: Vec<Vec<(u8, bool, &str)>> = vec![];
     assert_eq!(
-        search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &false, &true),
+        search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &false, &false, &true),
         expected_result
     );
 }
@@ -196,7 +204,7 @@ fn command_by_name_word_nowhere_file() {
 fn command_by_desc_word_nowhere_file() {
     let expected_result: Vec<Vec<(u8, bool, &str)>> = vec![];
     assert_eq!(
-        search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &true, &false),
+        search_using(NON_EXISTENT_COMMAND, FILE_COMMAND, &false, &true, &false),
         expected_result
     );
 }
@@ -215,7 +223,7 @@ fn command_by_all_word_in_multiple_desc_file() {
     .collect()];
 
     assert_eq!(
-        search_using(MULTIPLE_LINE_DESC, FILE_COMMAND, &false, &false),
+        search_using(MULTIPLE_LINE_DESC, FILE_COMMAND, &false, &false, &false),
         expected_result
     );
 }
@@ -233,7 +241,7 @@ fn command_by_name_word_in_multiple_file() {
     .into_iter()
     .collect()];
     assert_eq!(
-        search_using(MULTIPLE_LINE_COMMAND, FILE_COMMAND, &false, &true),
+        search_using(MULTIPLE_LINE_COMMAND, FILE_COMMAND, &false, &false, &true),
         expected_result
     );
 }
@@ -252,7 +260,7 @@ fn command_by_desc_word_in_multiple_file() {
     .collect()];
 
     assert_eq!(
-        search_using(MULTIPLE_LINE_DESC, FILE_COMMAND, &true, &false),
+        search_using(MULTIPLE_LINE_DESC, FILE_COMMAND, &false, &true, &false),
         expected_result
     );
 }
