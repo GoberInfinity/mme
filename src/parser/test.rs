@@ -11,6 +11,7 @@ pub const TEXT: &str = "--text-color";
 pub const INPUT_TEXT: &str = "white";
 pub const HIGHLIGHT: &str = "--highlight-color";
 pub const INPUT_HIGHLIGHT: &str = "blue";
+pub const ALL: &str = "-a";
 pub const NAME: &str = "-n";
 pub const DESC: &str = "-d";
 pub const INPUT_WORD: &str = "word";
@@ -46,13 +47,14 @@ fn all_arguments() {
             INPUT_TEXT,
             HIGHLIGHT,
             INPUT_HIGHLIGHT,
+            ALL,
             NAME,
             DESC,
             INPUT_WORD,
         ]),
         Command {
             word_to_search: Some(INPUT_WORD.to_string()),
-            print_all: false,
+            print_all: true,
             search_only_in_name: true,
             search_only_in_desc: true,
             path: Some(INPUT_PATH.to_string()),
@@ -93,10 +95,10 @@ fn all_config() {
 #[test]
 fn all_search() {
     assert_eq!(
-        Command::from_iter(&[BINARY, NAME, DESC, INPUT_WORD]),
+        Command::from_iter(&[BINARY, ALL, NAME, DESC, INPUT_WORD]),
         Command {
             word_to_search: Some(INPUT_WORD.to_string()),
-            print_all: false,
+            print_all: true,
             search_only_in_name: true,
             search_only_in_desc: true,
             path: None,
