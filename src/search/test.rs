@@ -31,9 +31,6 @@ const NON_EXISTENT_COMMAND: &str = "whoami";
 const LS_COMMAND: &str = "ls";
 const LS_DESC: &str = "Lists";
 const LS_DESC_UTF8: &str = "Каталог";
-const N_RESULT_LS: (&str, &str) = ("NAME", "ls -la -- # > *");
-const D_RESULT_LS: (&str, &str) = ("DESC", "Lists directory > # *");
-const D_RESULT_UTF8_LS: (&str, &str) = ("DESC", "Каталог списков > # *");
 
 const N_RESULT_LS_2: &str = "ls -la -- # > *";
 const D_RESULT_LS_2: &str = "Lists directory > # *";
@@ -41,17 +38,11 @@ const D_RESULT_UTF8_LS_2: &str = "Каталог списков > # *";
 
 const RM_COMMAND: &str = "rm";
 const RM_DESC: &str = "Deletes all --";
-const N_RESULT_RM: (&str, &str) = ("NAME", "rm -rf -all");
-const D_RESULT_RM: (&str, &str) = ("DESC", "Deletes all --");
 
 const N_RESULT_RM_2: &str = "rm -rf -all";
 const D_RESULT_RM_2: &str = "Deletes all --";
 
 const RUST_COMMAND: &str = "rustup";
-const N_RESULT_RUST: (&str, &str) = ("NAME", "rustup default <version>");
-const D_RESULT_RUST: (&str, &str) = ("DESC", " It uses");
-const RESULT_RUST_1: (&str, &str) = ("   ", "the rust version");
-const RESULT_RUST_2: (&str, &str) = ("   ", "specified");
 
 const N_RESULT_RUST_2: &str = "rustup default <version>";
 const D_RESULT_RUST_2: &str = " It uses";
@@ -60,12 +51,6 @@ const RESULT_RUST_2_2: &str = "specified";
 
 const MULTIPLE_LINE_COMMAND: &str = "-h";
 const MULTIPLE_LINE_DESC: &str = "secure";
-const N_RESULT_ML_1: (&str, &str) = ("NAME", "ssh");
-const N_RESULT_ML_2: (&str, &str) = ("   ", "-h");
-const N_RESULT_ML_3: (&str, &str) = ("   ", "-a");
-const D_RESULT_ML_1: (&str, &str) = ("DESC", "Creates");
-const D_RESULT_ML_2: (&str, &str) = ("   ", "secure");
-const D_RESULT_ML_3: (&str, &str) = ("   ", "connection");
 
 const N_RESULT_ML_1_2: &str = "ssh";
 const N_RESULT_ML_2_2: &str = "-h";
