@@ -1,7 +1,7 @@
 use super::*;
 
-// TODO: Add unit testing to print all
-
+// Change the hardcoded document using const-fn when stable.
+// https://doc.rust-lang.org/beta/unstable-book/language-features/const-fn.html
 const SINGLE_FILE_COMMAND: &str = "#ls -la -- # > *
 >Lists directory > # *
 ";
@@ -60,6 +60,8 @@ const N_RESULT_ML_3_2: &str = "-a";
 const D_RESULT_ML_1_2: &str = "Creates";
 const D_RESULT_ML_2_2: &str = "secure";
 const D_RESULT_ML_3_2: &str = "connection";
+
+const EMPTY_COMMAND: &str = "";
 
 #[test]
 fn command_by_all_word_in_name_file_with_one_command() {
@@ -261,6 +263,40 @@ fn command_by_desc_word_in_multiple_file() {
 
     assert_eq!(
         search_using(MULTIPLE_LINE_DESC, FILE_COMMAND, &false, &true, &false),
+        expected_result
+    );
+}
+
+#[test]
+fn command_print_all() {
+    let expected_result: Vec<Vec<(u8, bool, &str)>> =
+        vec![vec![(0, false, N_RESULT_LS_2), (1, false, D_RESULT_LS_2)]
+            .into_iter()
+            .collect()];
+
+    assert_eq!(
+        search_using(EMPTY_COMMAND, SINGLE_FILE_COMMAND, &true, &false, &false),
+        expected_result
+    );
+}
+
+#[test]
+fn command_print_all_utf8() {
+    let expected_result: Vec<Vec<(u8, bool, &str)>> = vec![vec![
+        (0, false, N_RESULT_LS_2),
+        (1, false, D_RESULT_UTF8_LS_2),
+    ]
+    .into_iter()
+    .collect()];
+
+    assert_eq!(
+        search_using(
+            EMPTY_COMMAND,
+            SINGLE_FILE_COMMAND_UTF8,
+            &true,
+            &false,
+            &false
+        ),
         expected_result
     );
 }

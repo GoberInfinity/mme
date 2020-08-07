@@ -1,6 +1,3 @@
-/* TODO:- Add parameter to print result_of_searching
-*/
-
 use crate::user;
 use ansi_term::{ANSIString, ANSIStrings, Colour};
 use std::fs;

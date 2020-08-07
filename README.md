@@ -10,7 +10,7 @@ mme is a search tool that helps you to print commands and their description usin
 
 The binary name for rememberme is mme.
 
-[Archives of precompiled binaries for rememberme are available for macOS, Wiindows and Linux.](https://github.com/GoberInfinity/mme/releases)
+[Archives of precompiled binaries for rememberme are available for macOS, Windows and Linux.](https://github.com/GoberInfinity/mme/releases)
 
 ## Usage
 
