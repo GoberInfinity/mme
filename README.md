@@ -16,24 +16,23 @@ The binary name for rememberme is mme.
 
 ```
 USAGE:
-    mme [FLAGS] [OPTIONS] [word-to-search]
+    mme.exe [FLAGS] [OPTIONS] [word-to-search]
 
 FLAGS:
-    -a, --all        Displays all the commands and their descriptions
         --help       Prints help information
-    -d, --desc       Searches the word only by descriptions
-    -n, --name       Searches the word only by names
+    -a, --all        Prints all the commands and their descriptions
+    -d, --desc       Searches the word only in descriptions
+    -n, --name       Searches the word only in names
     -V, --version    Prints version information
 
 OPTIONS:
-    -h, --header-color <header-color>          Sets the color of NAME, DESC words
-    -l, --highlight-color <highlight-color>    Sets the color of the word inside the text
-        --path <path>                          Sets the path of the file where mme is going to search
+    -f, --fixed-color <fixed-color>            Sets the color of NAME, DESC words
+    -h, --highlight-color <highlight-color>    Sets the color of the highlighted word
+    -p, --path <path>                          Sets the path of the file where mme is going to search
     -t, --text-color <text-color>              Sets the color of the text
 
 ARGS:
-    <word-to-search>    Word to search in the file specified in the path
-
+    <word-to-search>    Word to search in the document specified in the configuration
 ```
 
 ## Examples
