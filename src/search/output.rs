@@ -1,5 +1,4 @@
-/* TODO:- Add parameter to print all
-- Self fn instead of regular functions?
+/* TODO:- Add parameter to print result_of_searching
 */
 
 use crate::user;
@@ -56,11 +55,11 @@ fn search_using<'a>(
     by_head: &bool,
 ) -> Vec<Vec<(u8, bool, &'a str)>> {
     let query = query.to_lowercase();
-    let mut found = false;
-    let mut n_b: Vec<(u8, bool, &str)> = Vec::new();
-    let mut all = Vec::new();
     let size_doc = contents.lines().count();
+    let mut found = false;
     let mut last_type = NAME_SYMBOL;
+    let mut result_of_searching = Vec::new();
+    let mut buffer: Vec<(u8, bool, &str)> = Vec::new();
 
     let by_all = match (by_head, by_desc) {
         (true, true) => true,
@@ -77,14 +76,14 @@ fn search_using<'a>(
                 // Validate that the comment only occur in a stand alone line
                 COMMENT_SYMBOL => continue,
                 NAME_SYMBOL => {
-                    split_and_put_in_buffer(line, NAME_REP, NAME_SYMBOL, &mut n_b);
+                    split_and_put_in_buffer(line, NAME_REP, NAME_SYMBOL, &mut buffer);
                     last_type = NAME_SYMBOL;
                 }
                 DESC_SYMBOL => {
-                    split_and_put_in_buffer(line, DESC_REP, DESC_SYMBOL, &mut n_b);
+                    split_and_put_in_buffer(line, DESC_REP, DESC_SYMBOL, &mut buffer);
                     last_type = DESC_SYMBOL;
                 }
-                _ => split_and_put_in_buffer(line, SEPARATOR_REP, SEPARATOR_SYMBOL, &mut n_b),
+                _ => split_and_put_in_buffer(line, SEPARATOR_REP, SEPARATOR_SYMBOL, &mut buffer),
             },
             None => {
                 empty_line = true;
@@ -96,10 +95,10 @@ fn search_using<'a>(
                 NAME_SYMBOL => is_necessary_search_by_name(by_desc, &by_all),
                 _ => is_necessary_search_by_desc(by_head, &by_all, &end_of_file),
             } {
-                match n_b.last() {
+                match buffer.last() {
                     Some(line) => {
                         if line.2.to_lowercase().contains(&query) {
-                            if let Some(last) = n_b.last_mut() {
+                            if let Some(last) = buffer.last_mut() {
                                 last.1 = true;
                             }
                             found = true;
@@ -112,14 +111,14 @@ fn search_using<'a>(
 
         if empty_line || end_of_file {
             if found {
-                all.push(n_b.clone());
+                result_of_searching.push(buffer.clone());
                 found = false;
             }
-            n_b.clear();
+            buffer.clear();
         }
     }
 
-    all
+    result_of_searching
 }
 
 fn split_and_put_in_buffer<'a>(
